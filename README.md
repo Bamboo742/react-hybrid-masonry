@@ -6,7 +6,7 @@ A high-performance React virtual scrolling masonry layout library with support f
 
 ## 🎮 Live Demo
 
-**[View Live Demo](https://cleverbamboo.github.io/react-hybrid-masonry/)**
+**[View Live Demo](https://bamboo742.github.io/react-hybrid-masonry/)**
 
 Experience all three layout modes with interactive examples and code snippets.
 
