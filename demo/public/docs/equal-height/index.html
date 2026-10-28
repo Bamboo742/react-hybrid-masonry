@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FullWidthEqualHeightMasonry – React Equal-Height Justified Gallery Layout | React Hybrid Masonry</title>
+    <meta name="description" content="FullWidthEqualHeightMasonry API reference: a Google Photos style justified layout for React where every row has the same height and fills the container width, with virtual scrolling and infinite loading." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="FullWidthEqualHeightMasonry – React Equal-Height Justified Gallery Layout | React Hybrid Masonry" />
+    <meta property="og:description" content="FullWidthEqualHeightMasonry API reference: a Google Photos style justified layout for React where every row has the same height and fills the container width, with virtual scrolling and infinite loading." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"FullWidthEqualHeightMasonry","description":"FullWidthEqualHeightMasonry API reference: a Google Photos style justified layout for React where every row has the same height and fills the container width, with virtual scrolling and infinite loading.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"FullWidthEqualHeightMasonry","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/equal-height/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/" class="current" aria-current="page">FullWidthEqualHeightMasonry</a><ul class="sub"><li><a href="#usage">Usage</a></li><li><a href="#props">Props</a></li><li><a href="#behaviour">How it behaves</a></li><li><a href="#tuning">Tuning</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>FullWidthEqualHeightMasonry</h1>
+        <p class="lead">Google Photos style layout: images keep their aspect ratio, every row has one height and is stretched or shrunk to fill the container width exactly.</p>
+<h2 id="usage">Usage</h2>
+<pre><code>import { FullWidthEqualHeightMasonry } from "react-hybrid-masonry";
+
+&lt;FullWidthEqualHeightMasonry
+  loadData={loadData}
+  pageSize={30}
+  targetRowHeight={245}
+  sizeRange={[230, 260]}
+  maxItemWidth={975}
+  gap={8}
+  renderItem={(item) =&gt; (
+    &lt;div
+      style={{
+        position: "absolute",
+        left: item.x,
+        top: item.y,
+        width: item.width,
+        height: item.height,
+      }}
+    &gt;
+      &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  )}
+/&gt;</code></pre>
+<h2 id="props">Props</h2>
+<div class="table-wrap"><table><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>loadData</code></td><td><code>(page, pageSize) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;</code></td><td>–</td><td>Loads one page. Page numbers start at 1.</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index) =&gt; ReactNode</code></td><td>required</td><td>Renders one positioned item. <code>index</code> is the position in all loaded data.</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>Items requested per page.</td></tr><tr><td><code>targetRowHeight</code></td><td><code>number</code></td><td><code>245</code></td><td>Preferred row height. The real height is adjusted within <code>sizeRange</code>.</td></tr><tr><td><code>sizeRange</code></td><td><code>[number, number]</code></td><td><code>[230, 260]</code></td><td>Allowed row height range, <code>[min, max]</code>.</td></tr><tr><td><code>maxItemWidth</code></td><td><code>number</code></td><td><code>975</code></td><td>Maximum width of a single item.</td></tr><tr><td><code>maxStretchRatio</code></td><td><code>number</code></td><td><code>1.5</code></td><td>A row keeps taking images until filling it needs at most this enlargement. Shrinking is not limited.</td></tr><tr><td><code>gap</code></td><td><code>number</code></td><td><code>8</code></td><td>Gap between items, horizontally and vertically, in px.</td></tr><tr><td><code>buffer</code></td><td><code>number</code></td><td><code>1500</code></td><td>Extra distance in px that is still rendered around the viewport.</td></tr><tr><td><code>loadMoreThreshold</code></td><td><code>number</code></td><td><code>500</code></td><td>Distance in px from the bottom at which the next page is requested.</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>Maps your data to dimensions.</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Reserved. It has no effect yet.</td></tr></tbody></table></div>
+<h2 id="behaviour">How it behaves</h2>
+<ul><li>Rows are built greedily: images are added to a row while filling the row would need an enlargement above <code>maxStretchRatio</code>. Rows may shrink images as much as needed.</li><li>The row height is then clamped to <code>sizeRange</code>, and widths are distributed so that the row ends exactly at the container edge, without leaving rounding errors on the last image.</li><li>The <strong>last row is not stretched</strong>. It keeps natural proportions (at most <code>targetRowHeight</code> high), so a few images are never blown up. When the next page arrives, that row is recomputed.</li><li>No item is wider than <code>maxItemWidth</code>, so a very wide panorama does not take the whole row.</li></ul>
+<p>The full procedure is described in <a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">how the equal-height algorithm works</a>.</p>
+<h2 id="tuning">Tuning</h2>
+<div class="table-wrap"><table><thead><tr><th>Goal</th><th>Change</th></tr></thead><tbody><tr><td>Larger photos, fewer per row</td><td>Raise <code>targetRowHeight</code> and <code>sizeRange</code>, for example <code>320</code> and <code>[300, 360]</code>.</td></tr><tr><td>Tighter justification</td><td>Narrow <code>sizeRange</code>; rows then fill the width by choosing different image counts rather than by scaling.</td></tr><tr><td>Avoid heavily enlarged rows</td><td>Lower <code>maxStretchRatio</code> towards <code>1.2</code>; more images are put into a row before it is closed.</td></tr><tr><td>Prevent giant panoramas</td><td>Lower <code>maxItemWidth</code>.</td></tr></tbody></table></div>
+<div class="note">Related: <a href="/react-hybrid-masonry/docs/guides/responsive/">responsive layouts</a>, <a href="/react-hybrid-masonry/docs/guides/pagination/">pagination and infinite scroll</a>.</div>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/virtual-masonry/"><small>Previous</small>VirtualMasonry</a><a rel="next" href="/react-hybrid-masonry/docs/dynamic-view/"><small>Next</small>DynamicMasonryView</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-hybrid-masonry Changelog | React Hybrid Masonry</title>
+    <meta name="description" content="Release notes for react-hybrid-masonry: new columns and initialItems options, request handling fixes, a rewritten equal-height row algorithm and more." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="react-hybrid-masonry Changelog | React Hybrid Masonry" />
+    <meta property="og:description" content="Release notes for react-hybrid-masonry: new columns and initialItems options, request handling fixes, a rewritten equal-height row algorithm and more." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Changelog","description":"Release notes for react-hybrid-masonry: new columns and initialItems options, request handling fixes, a rewritten equal-height row algorithm and more.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"Changelog","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/changelog/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/" class="current" aria-current="page">Changelog</a><ul class="sub"><li><a href="#unreleased">Unreleased</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></li></ul></nav>
+      <main>
+        <h1>Changelog</h1>
+        <p class="lead">Notable changes to the library.</p>
+<h2 id="unreleased">Unreleased</h2>
+<h3>Added</h3>
+<ul><li><code>VirtualMasonry</code>: <code>columns</code> to fix the column count, <code>initialItems</code> and <code>initialHasMore</code> to start from a prefetched first page.</li><li><code>DynamicMasonryView</code>: <code>waterfallConfig.columns</code>.</li><li>Server rendering support: layout effects fall back to <code>useEffect</code> on the server.</li></ul>
+<h3>Changed</h3>
+<ul><li>Equal-height layout: new row building rule driven by <code>maxStretchRatio</code>, widths distributed from cumulative ratios so rounding errors no longer end up on the last image, and the last row is scaled down uniformly when it overflows.</li><li>Waterfall layout: the calculated column count never makes columns narrower than <code>minColumnWidth</code>.</li></ul>
+<h3>Fixed</h3>
+<ul><li>Quick scrolling could start two page requests at once; a synchronous guard now allows a single request.</li><li>A failed request is no longer retried in an endless loop; paging stops until the component is remounted.</li><li>Container width could stay stale after a window was resized in a background tab; <code>resize</code> and <code>visibilitychange</code> now re-measure it.</li><li>Equal-height scroll position used a cached <code>offsetTop</code>; it now reads <code>getBoundingClientRect</code>, so content above the list can change height safely.</li><li>Visible items kept a stable identity while scrolling, so memoized cards no longer re-render on every scroll event.</li></ul>
+<h2 id="1.0.1">1.0.1</h2>
+<p>Current release on <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>: <code>VirtualMasonry</code>, <code>FullWidthEqualHeightMasonry</code> and <code>DynamicMasonryView</code>.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/faq/"><small>Previous</small>FAQ &amp; troubleshooting</a><span></span></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

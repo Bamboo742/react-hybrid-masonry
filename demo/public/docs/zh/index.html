@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Hybrid Masonry 文档 – 虚拟滚动瀑布流与等高布局 | React Hybrid Masonry</title>
+    <meta name="description" content="react-hybrid-masonry 使用文档：零依赖的 React 虚拟滚动瀑布流（Masonry）与 Google Photos 风格等高布局组件库，支持无限滚动和接口动态切换布局。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="React Hybrid Masonry 文档 – 虚拟滚动瀑布流与等高布局 | React Hybrid Masonry" />
+    <meta property="og:description" content="react-hybrid-masonry 使用文档：零依赖的 React 虚拟滚动瀑布流（Masonry）与 Google Photos 风格等高布局组件库，支持无限滚动和接口动态切换布局。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"React Hybrid Masonry 使用文档","description":"react-hybrid-masonry 使用文档：零依赖的 React 虚拟滚动瀑布流（Masonry）与 Google Photos 风格等高布局组件库，支持无限滚动和接口动态切换布局。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/" class="current" aria-current="page">简介</a><ul class="sub"><li><a href="#features">特性</a></li><li><a href="#install">安装</a></li><li><a href="#quick-start">快速开始</a></li><li><a href="#choose">该用哪个组件？</a></li><li><a href="#data-contract">数据约定</a></li><li><a href="#render-contract">渲染约定</a></li></ul></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>React Hybrid Masonry 使用文档</h1>
+        <p class="lead">零依赖的 React 组件库，提供虚拟滚动的<strong>瀑布流（Masonry）</strong>与<strong>等高布局</strong>，支持无限滚动，并可由接口决定使用哪一种布局。</p>
+<h2 id="features">特性</h2>
+<ul><li><strong>虚拟滚动</strong>：只渲染视口附近的元素，超长列表依然流畅。</li><li><strong>瀑布流布局</strong>：Pinterest 风格，每个元素放进当前最短的一列。</li><li><strong>等高布局</strong>：Google Photos 风格，每行高度一致，保持每张图片的原始比例。</li><li><strong>动态布局</strong>：由第一次接口返回的数据决定使用哪种布局。</li><li><strong>无限滚动</strong>：基于 <code>IntersectionObserver</code>，预加载距离可配置，同一时间只会有一个翻页请求在途。</li><li><strong>响应式</strong>：监听容器宽度，宽度变化时重新计算列和行。</li><li>TypeScript 编写，只对 React 16.8 及以上有 peer 依赖，没有其他依赖。</li></ul>
+<h2 id="install">安装</h2>
+<pre><code>npm install react-hybrid-masonry
+# 或
+yarn add react-hybrid-masonry
+# 或
+pnpm add react-hybrid-masonry</code></pre>
+<h2 id="quick-start">快速开始</h2>
+<p>三个组件的约定一致：<code>loadData(page, pageSize)</code> 返回 <code>{ data, hasMore }</code>，每条数据都有宽和高，<code>renderItem</code> 把元素画在库算好的位置上。</p>
+<pre><code>import { VirtualMasonry } from "react-hybrid-masonry";
+
+export function Gallery() {
+  const loadData = async (page: number, pageSize: number) =&gt; {
+    const res = await fetch("/api/images?page=" + page + "&amp;size=" + pageSize);
+    const json = await res.json();
+    return { data: json.items, hasMore: json.hasMore };
+  };
+
+  return (
+    &lt;VirtualMasonry
+      loadData={loadData}
+      pageSize={30}
+      minColumnWidth={200}
+      maxColumnWidth={350}
+      gap={16}
+      renderItem={(item) =&gt; (
+        &lt;div key={item.id} style={{ position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height }}&gt;
+          &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%" }} /&gt;
+        &lt;/div&gt;
+      )}
+    /&gt;
+  );
+}</code></pre>
+<h2 id="choose">该用哪个组件？</h2>
+<div class="table-wrap"><table><thead><tr><th>组件</th><th>布局</th><th>适用场景</th></tr></thead><tbody><tr><td><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></td><td>瀑布流：列宽相同，元素高度各异</td><td>图片墙、商品流、高度不一的卡片</td></tr><tr><td><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></td><td>每行等高并铺满整行宽度</td><td>相册、时间线、以图片为主的搜索结果</td></tr><tr><td><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></td><td>运行时在两者之间选择</td><td>由后端或内容决定列表展示形式的场景</td></tr></tbody></table></div>
+<h2 id="data-contract">数据约定</h2>
+<p>组件需要在图片加载之前就知道每个元素的尺寸，才能算出它的位置。尺寸依次读取第一组存在的字段：<code>width</code>/<code>height</code>、<code>w</code>/<code>h</code>、<code>imgW</code>/<code>imgH</code>。其他结构请用 <code>mapSize</code>：</p>
+<pre><code>&lt;VirtualMasonry
+  mapSize={(raw) =&gt; ({ width: raw.cover.w, height: raw.cover.h })}
+  /* ... */
+/&gt;</code></pre>
+<p>传给 <code>renderItem</code> 的每个 item 是你的原始对象，加上计算出的 <code>x</code>、<code>y</code>、<code>width</code>、<code>height</code>（以及 <code>widthRatio</code>）。你自己的字段，如 <code>url</code>、<code>title</code>，都会保留。</p>
+<h2 id="render-contract">渲染约定</h2>
+<ul><li><code>renderItem</code> 返回的根元素必须使用<strong>绝对定位</strong>，并带上传入的 <code>left</code>、<code>top</code>、<code>width</code>、<code>height</code>。</li><li>在这个元素上设置稳定的 <code>key</code>（如 <code>item.id</code>）。瀑布流布局里 <code>index</code> 参数只统计当前已渲染的元素，滚动时会变化。</li><li>组件跟随 <strong>window</strong> 滚动，不是在内部容器里滚动，详见<a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a>。</li></ul>
+<div class="note">下一步：阅读你所选组件的页面，或者直接看<a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a>。</div>
+<nav class="pager" aria-label="翻页"><span></span><a rel="next" href="/react-hybrid-masonry/docs/zh/virtual-masonry/"><small>下一页</small>VirtualMasonry</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

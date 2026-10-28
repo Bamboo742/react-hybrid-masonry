@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Using react-hybrid-masonry with Next.js and Server-Side Rendering | React Hybrid Masonry</title>
+    <meta name="description" content="How to use the React masonry components in the Next.js App Router and with SSR: the use client directive, hydration safety, initialItems for a prefetched first page and what the server HTML contains." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Using react-hybrid-masonry with Next.js and Server-Side Rendering | React Hybrid Masonry" />
+    <meta property="og:description" content="How to use the React masonry components in the Next.js App Router and with SSR: the use client directive, hydration safety, initialItems for a prefetched first page and what the server HTML contains." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Next.js and server-side rendering","description":"How to use the React masonry components in the Next.js App Router and with SSR: the use client directive, hydration safety, initialItems for a prefetched first page and what the server HTML contains.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"Next.js & SSR","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/" class="current" aria-current="page">Next.js &amp; SSR</a><ul class="sub"><li><a href="#use-client">Add the use client directive</a></li><li><a href="#initial">Hand over a prefetched first page</a></li><li><a href="#hydration">Hydration is safe</a></li><li><a href="#html">What the server HTML contains</a></li><li><a href="#lazy">Loading it lazily</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>Next.js and server-side rendering</h1>
+        <p class="lead">What works on the server, what is deferred to the browser and how to hand over a prefetched first page.</p>
+<h2 id="use-client">Add the use client directive</h2>
+<p>The components use React hooks and are published without a directive. In the Next.js App Router import them from a client file:</p>
+<pre><code>"use client";
+
+import { VirtualMasonry } from "react-hybrid-masonry";
+
+export default function Gallery({ first }: { first: { items: any[]; hasMore: boolean } }) {
+  return (
+    &lt;VirtualMasonry
+      initialItems={first.items}
+      initialHasMore={first.hasMore}
+      loadData={(page, size) =&gt; fetch("/api/images?page=" + page + "&amp;size=" + size).then((r) =&gt; r.json())}
+      renderItem={(item) =&gt; &lt;Card item={item} /&gt;}
+    /&gt;
+  );
+}</code></pre>
+<h2 id="initial">Hand over a prefetched first page</h2>
+<p>Fetch page 1 in a server component and pass it as <code>initialItems</code>. The component then starts with that data, does <strong>not</strong> show the loading state and does <strong>not</strong> request page 1 again; the first <code>loadData</code> call is for page 2.</p>
+<pre><code>// app/gallery/page.tsx (server component)
+import Gallery from "./Gallery";
+
+export default async function Page() {
+  const res = await fetch("https://api.example.com/images?page=1&amp;size=30");
+  const first = await res.json();
+  return &lt;Gallery first={{ items: first.items, hasMore: first.hasMore }} /&gt;;
+}</code></pre>
+<div class="note"><code>initialItems</code> is available on <code>VirtualMasonry</code>. <code>DynamicMasonryView</code> and <code>FullWidthEqualHeightMasonry</code> load their first page on the client.</div>
+<h2 id="hydration">Hydration is safe</h2>
+<p>Layout effects use <code>useLayoutEffect</code> in the browser and fall back to <code>useEffect</code> on the server. The container width is unknown during the server render, so the first render is an empty container on both sides and there is no hydration mismatch. Positions are computed right after mount, once the width is measured.</p>
+<h2 id="html">What the server HTML contains</h2>
+<p>Because positions depend on the measured width, the <strong>server HTML does not contain the cards</strong>, even with <code>initialItems</code>. If search engines must see the content, additionally render a crawlable list (for example links in the page, or a <code>&lt;noscript&gt;</code> block) next to the layout, or keep this gallery for content that does not need to be indexed.</p>
+<h2 id="lazy">Loading it lazily</h2>
+<p>The layout is only useful in the browser, so it can be split out of the initial bundle:</p>
+<pre><code>import dynamic from "next/dynamic";
+
+const Gallery = dynamic(() =&gt; import("./Gallery"), { ssr: false });</code></pre>
+<p>Use this only when you do not need <code>initialItems</code> to avoid a loading flash.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/guides/pagination/"><small>Previous</small>Pagination &amp; infinite scroll</a><a rel="next" href="/react-hybrid-masonry/docs/guides/responsive/"><small>Next</small>Responsive layouts</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

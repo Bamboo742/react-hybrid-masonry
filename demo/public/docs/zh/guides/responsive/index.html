@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 响应式瀑布流：按断点设置列数 | React Hybrid Masonry</title>
+    <meta name="description" content="react-hybrid-masonry 如何响应容器宽度变化，如何按断点选择列数，以及等高布局如何适配不同屏幕。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="React 响应式瀑布流：按断点设置列数 | React Hybrid Masonry" />
+    <meta property="og:description" content="react-hybrid-masonry 如何响应容器宽度变化，如何按断点选择列数，以及等高布局如何适配不同屏幕。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"响应式布局","description":"react-hybrid-masonry 如何响应容器宽度变化，如何按断点选择列数，以及等高布局如何适配不同屏幕。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"响应式布局","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/guides/responsive/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/" class="current" aria-current="page">响应式布局</a><ul class="sub"><li><a href="#measure">宽度如何测量</a></li><li><a href="#waterfall">瀑布流：按宽度限制</a></li><li><a href="#breakpoints">瀑布流：按断点指定列数</a></li><li><a href="#equal-height">等高布局</a></li><li><a href="#cost">缩放的代价</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>响应式布局</h1>
+        <p class="lead">布局会跟随容器宽度。这里介绍如何控制它在各个尺寸下的表现。</p>
+<h2 id="measure">宽度如何测量</h2>
+<p>布局容器（父元素宽度的 <code>100%</code>）的宽度会在挂载时读取一次，之后在 <code>ResizeObserver</code> 通知、窗口 <code>resize</code> 和 <code>visibilitychange</code> 时再读取。多出来的监听用于保证窗口在标签页处于后台时被缩放后，布局依然正确。只有宽度真的变化时才会更新状态。</p>
+<p>所以父元素必须有真实宽度。被隐藏的父元素（<code>display: none</code>）在显示出来之前什么也不会渲染。</p>
+<h2 id="waterfall">瀑布流：按宽度限制</h2>
+<p>设置 <code>minColumnWidth</code> 和 <code>maxColumnWidth</code> 后，列数随宽度变化，规则见<a href="/react-hybrid-masonry/docs/zh/virtual-masonry/#columns">列数如何确定</a>。只需要大小合适的列时，这样就够用了。</p>
+<h2 id="breakpoints">瀑布流：按断点指定列数</h2>
+<p>当设计稿要求在特定宽度下是精确的列数时，请自己计算并传入 <code>columns</code>：</p>
+<pre><code>import { useEffect, useState } from "react";
+
+function useColumns() {
+  const [columns, setColumns] = useState(2);
+  useEffect(() =&gt; {
+    const update = () =&gt; {
+      const w = window.innerWidth;
+      setColumns(w &gt;= 1600 ? 6 : w &gt;= 1280 ? 5 : w &gt;= 992 ? 4 : w &gt;= 640 ? 3 : 2);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () =&gt; window.removeEventListener("resize", update);
+  }, []);
+  return columns;
+}
+
+function Gallery() {
+  const columns = useColumns();
+  return &lt;VirtualMasonry columns={columns} gap={16} loadData={loadData} renderItem={renderCard} /&gt;;
+}</code></pre>
+<p><code>DynamicMasonryView</code> 里同样可以用 <code>waterfallConfig={{ columns }}</code>。</p>
+<h2 id="equal-height">等高布局</h2>
+<p>等高布局没有列数的概念：每次宽度变化，各行都会按同一规则重新拼出，所以每行的图片数量会自动变化。想按断点调整观感，可以传入不同的 <code>targetRowHeight</code> 和 <code>sizeRange</code>，比如手机上用更小的行高：</p>
+<pre><code>const small = window.innerWidth &lt; 640;
+
+&lt;FullWidthEqualHeightMasonry
+  targetRowHeight={small ? 140 : 245}
+  sizeRange={small ? [120, 170] : [230, 260]}
+  gap={small ? 4 : 8}
+  loadData={loadData}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h2 id="cost">缩放的代价</h2>
+<p>每次宽度变化都会重新计算所有已加载元素的布局。几千个元素时开销很小，但不要在每一帧动画里都去修改 <code>gap</code>、<code>columns</code> 或尺寸参数。</p>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/"><small>上一页</small>Next.js 与 SSR</a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/performance/"><small>下一页</small>性能调优</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

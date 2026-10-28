@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>等高（Justified）布局算法是如何工作的 | React Hybrid Masonry</title>
+    <meta name="description" content="逐步讲解 FullWidthEqualHeightMasonry 的行填充算法：贪心拼行、缩放比例计算、行高范围限制、不累积舍入误差的宽度分配，以及最后一行的规则。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="等高（Justified）布局算法是如何工作的 | React Hybrid Masonry" />
+    <meta property="og:description" content="逐步讲解 FullWidthEqualHeightMasonry 的行填充算法：贪心拼行、缩放比例计算、行高范围限制、不累积舍入误差的宽度分配，以及最后一行的规则。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"等高布局算法详解","description":"逐步讲解 FullWidthEqualHeightMasonry 的行填充算法：贪心拼行、缩放比例计算、行高范围限制、不累积舍入误差的宽度分配，以及最后一行的规则。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"等高布局算法详解","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" class="current" aria-current="page">等高布局算法详解</a><ul class="sub"><li><a href="#input">输入</a></li><li><a href="#rows">1. 贪心拼出一行</a></li><li><a href="#height">2. 计算并限制行高</a></li><li><a href="#widths">3. 不累积误差地分配宽度</a></li><li><a href="#last">4. 最后一行</a></li><li><a href="#virtual">5. 虚拟化</a></li><li><a href="#tips">调参提示</a></li></ul></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>等高布局算法详解</h1>
+        <p class="lead">行填充算法的逐步说明，调 <code>maxStretchRatio</code> 和 <code>sizeRange</code> 时很有用。</p>
+<h2 id="input">输入</h2>
+<p>每个元素有宽高比 <code>r = 宽 / 高</code>。以目标行高 <code>H</code> 计算，元素的理想宽度是 <code>r * H</code>。<code>W</code> 是容器宽度，<code>g</code> 是间距。</p>
+<h2 id="rows">1. 贪心拼出一行</h2>
+<p>用下一张图片开始一行。每次加入新图片之前，先计算让当前行铺满容器所需要的缩放比例：</p>
+<pre><code>scale = (W - (n - 1) * g) / sum(r_i * H)   // 这一行有 n 张图</code></pre>
+<ul><li>如果 <code>scale &lt;= maxStretchRatio</code>，说明这一行已经够满，结束这一行。</li><li>否则加入下一张图片再判断。加入图片总会让缩放比例更接近 1。</li><li>如果这一行已经需要<strong>缩小</strong>（<code>scale &lt; 1</code>），同样结束，缩小不设上限。</li></ul>
+<p>因为一张图几乎总是需要很大的放大才能填满一行，这条规则不需要特殊处理，就能保证每行至少有两张图。</p>
+<h2 id="height">2. 计算并限制行高</h2>
+<pre><code>rowHeight = H * scale
+rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange</code></pre>
+<p><code>sizeRange</code> 是一条独立的视觉密度限制，所以总是生效。限制导致无法精确铺满时，下一步仍会让整行结束在边缘。</p>
+<h2 id="widths">3. 不累积误差地分配宽度</h2>
+<p>每张图的理想宽度是 <code>r_i * rowHeight</code>。为了让这一行刚好结束在容器边缘，第 <code>i</code> 张图的右边缘根据理想宽度的累计占比计算，再取整：</p>
+<pre><code>available = W - (n - 1) * g
+rightEdge_i = (sum(ideal_0..i) / sum(ideal_all)) * available + i * g
+width_i     = round(rightEdge_i - x_i)</code></pre>
+<p>这样舍入误差不会累积，也不会全部压给最后一张图（那样它的比例会明显偏离真实图片）。最后每个宽度都会限制在 <code>maxItemWidth</code> 以内。</p>
+<h2 id="last">4. 最后一行</h2>
+<ul><li>已加载数据末尾的那一行<strong>不会被拉伸</strong>，它的高度被限制在 <code>sizeRange[0]</code> 与 <code>targetRowHeight</code> 之间。</li><li>如果它的自然宽度会超出容器，这一行所有图片按同一个系数等比缩小。</li><li>下一页到来后，原来的最后一行变成普通行，并重新计算。</li></ul>
+<h2 id="virtual">5. 虚拟化</h2>
+<p>每个元素得到 <code>x</code>、<code>y</code>、<code>width</code>、<code>height</code> 和 <code>originalIndex</code>。只有与「视口加上 <code>buffer</code>」相交的元素才会渲染，并以 <code>originalIndex</code> 作为 React 的 key。容器的 <code>minHeight</code> 是最后一行的底部。</p>
+<h2 id="tips">调参提示</h2>
+<ul><li>出现很多只有 2 张图的行，说明相对容器宽度来说 <code>targetRowHeight</code> 太大：调小它，或者放宽 <code>sizeRange</code>。</li><li><code>sizeRange</code> 很窄时行会很精确，但可选的组合变少；如果行看起来参差不齐，就放宽它。</li><li>降低 <code>maxStretchRatio</code> 会减少放大，提高它则会让行更早结束。</li></ul>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/guides/performance/"><small>上一页</small>性能调优</a><a rel="next" href="/react-hybrid-masonry/docs/zh/faq/"><small>下一页</small>常见问题</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

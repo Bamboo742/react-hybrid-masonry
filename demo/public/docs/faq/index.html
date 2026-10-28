@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-hybrid-masonry FAQ and Troubleshooting | React Hybrid Masonry</title>
+    <meta name="description" content="Answers to common problems with react-hybrid-masonry: blank containers, overlapping items, duplicate keys, loading that stops, Next.js hooks errors and layout switching." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/faq/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/faq/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/faq/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/faq/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="react-hybrid-masonry FAQ and Troubleshooting | React Hybrid Masonry" />
+    <meta property="og:description" content="Answers to common problems with react-hybrid-masonry: blank containers, overlapping items, duplicate keys, loading that stops, Next.js hooks errors and layout switching." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/faq/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"FAQ and troubleshooting","description":"Answers to common problems with react-hybrid-masonry: blank containers, overlapping items, duplicate keys, loading that stops, Next.js hooks errors and layout switching.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/faq/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"FAQ & troubleshooting","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/faq/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does it scroll inside its own container?","acceptedAnswer":{"@type":"Answer","text":"No. It follows the window scroll and reads its own position with getBoundingClientRect, so put it in a normally scrolling page. Scrolling inside a nested overflow container is not supported."}},{"@type":"Question","name":"Items are stacked at the top-left or overlap each other. Why?","acceptedAnswer":{"@type":"Answer","text":"The root element returned by renderItem must use position: absolute together with the given left, top, width and height. Without it the browser lays the items out as normal blocks."}},{"@type":"Question","name":"The container is tall but empty.","acceptedAnswer":{"@type":"Answer","text":"Positions are only computed after the container width has been measured, so a container that is hidden (display: none) or has zero width renders nothing. Make sure it has a real width. Opening a hidden tab triggers a re-measure through visibilitychange and ResizeObserver."}},{"@type":"Question","name":"Why do I get duplicate key warnings or flickering cards in the waterfall layout?","acceptedAnswer":{"@type":"Answer","text":"In VirtualMasonry the second argument of renderItem is the index among the currently rendered items, not the index in your data, and it changes while you scroll. Always put a stable key (for example key={item.id}) on the element you return."}},{"@type":"Question","name":"Loading stopped and never continues.","acceptedAnswer":{"@type":"Answer","text":"Either loadData returned hasMore: false, or a page request rejected. A failed request sets hasMore to false so the library does not retry in a loop. Remount the component (change its key) to start again, or catch the error inside loadData and return an empty page with hasMore: true if you prefer to keep going."}},{"@type":"Question","name":"The same page is requested twice.","acceptedAnswer":{"@type":"Answer","text":"Only one request is in flight at a time, so this is almost always React StrictMode running effects twice in development, or the component being mounted twice. In DynamicMasonryView the page-1 response used to pick the layout is cached and reused, so page 1 is not requested again by the inner layout."}},{"@type":"Question","name":"The layout does not switch when I change the API response.","acceptedAnswer":{"@type":"Answer","text":"In uncontrolled mode the layout type is read once, from the first loadData call. Pass the isMasonry prop to switch at runtime. Switching remounts the active layout and loads from page 1 again."}},{"@type":"Question","name":"I get a hooks error in the Next.js App Router.","acceptedAnswer":{"@type":"Answer","text":"The components use React hooks and are not marked with the use client directive. Import them from a file that starts with use client."}},{"@type":"Question","name":"Does enableAnimation do anything?","acceptedAnswer":{"@type":"Answer","text":"Not at the moment. It is accepted for API symmetry between the components and reserved for later; items are positioned without a transition."}},{"@type":"Question","name":"Which fields are used as the item size?","acceptedAnswer":{"@type":"Answer","text":"width/height, then w/h, then imgW/imgH. Use mapSize for any other field names. Items without a valid size cannot be laid out, so make sure every item has one."}}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/faq/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/" class="current" aria-current="page">FAQ &amp; troubleshooting</a><ul class="sub"></ul></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>FAQ and troubleshooting</h1>
+        <p class="lead">Common questions and the usual cause of problems.</p>
+<h3>Does it scroll inside its own container?</h3>
+<p>No. It follows the window scroll and reads its own position with getBoundingClientRect, so put it in a normally scrolling page. Scrolling inside a nested overflow container is not supported.</p>
+<h3>Items are stacked at the top-left or overlap each other. Why?</h3>
+<p>The root element returned by renderItem must use position: absolute together with the given left, top, width and height. Without it the browser lays the items out as normal blocks.</p>
+<h3>The container is tall but empty.</h3>
+<p>Positions are only computed after the container width has been measured, so a container that is hidden (display: none) or has zero width renders nothing. Make sure it has a real width. Opening a hidden tab triggers a re-measure through visibilitychange and ResizeObserver.</p>
+<h3>Why do I get duplicate key warnings or flickering cards in the waterfall layout?</h3>
+<p>In VirtualMasonry the second argument of renderItem is the index among the currently rendered items, not the index in your data, and it changes while you scroll. Always put a stable key (for example key={item.id}) on the element you return.</p>
+<h3>Loading stopped and never continues.</h3>
+<p>Either loadData returned hasMore: false, or a page request rejected. A failed request sets hasMore to false so the library does not retry in a loop. Remount the component (change its key) to start again, or catch the error inside loadData and return an empty page with hasMore: true if you prefer to keep going.</p>
+<h3>The same page is requested twice.</h3>
+<p>Only one request is in flight at a time, so this is almost always React StrictMode running effects twice in development, or the component being mounted twice. In DynamicMasonryView the page-1 response used to pick the layout is cached and reused, so page 1 is not requested again by the inner layout.</p>
+<h3>The layout does not switch when I change the API response.</h3>
+<p>In uncontrolled mode the layout type is read once, from the first loadData call. Pass the isMasonry prop to switch at runtime. Switching remounts the active layout and loads from page 1 again.</p>
+<h3>I get a hooks error in the Next.js App Router.</h3>
+<p>The components use React hooks and are not marked with the use client directive. Import them from a file that starts with use client.</p>
+<h3>Does enableAnimation do anything?</h3>
+<p>Not at the moment. It is accepted for API symmetry between the components and reserved for later; items are positioned without a transition.</p>
+<h3>Which fields are used as the item size?</h3>
+<p>width/height, then w/h, then imgW/imgH. Use mapSize for any other field names. Items without a valid size cannot be laid out, so make sure every item has one.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/"><small>Previous</small>How the equal-height layout works</a><a rel="next" href="/react-hybrid-masonry/docs/changelog/"><small>Next</small>Changelog</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

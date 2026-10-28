@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DynamicMasonryView – Switch Between Waterfall and Equal-Height Layout in React | React Hybrid Masonry</title>
+    <meta name="description" content="DynamicMasonryView API reference: choose between waterfall and equal-height layouts at runtime, from the first API response or a controlled prop, with first-page caching and error handling." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="DynamicMasonryView – Switch Between Waterfall and Equal-Height Layout in React | React Hybrid Masonry" />
+    <meta property="og:description" content="DynamicMasonryView API reference: choose between waterfall and equal-height layouts at runtime, from the first API response or a controlled prop, with first-page caching and error handling." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"DynamicMasonryView","description":"DynamicMasonryView API reference: choose between waterfall and equal-height layouts at runtime, from the first API response or a controlled prop, with first-page caching and error handling.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"DynamicMasonryView","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/dynamic-view/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/dynamic-view/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/" class="current" aria-current="page">DynamicMasonryView</a><ul class="sub"><li><a href="#modes">Three ways to pick the layout</a></li><li><a href="#props">Props</a></li><li><a href="#exports">Exported types</a></li></ul></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>DynamicMasonryView</h1>
+        <p class="lead">One component, two layouts. The layout is controlled by a prop, by the first API response, or by a default.</p>
+<h2 id="modes">Three ways to pick the layout</h2>
+<h3>1. Controlled</h3>
+<pre><code>&lt;DynamicMasonryView
+  isMasonry={useWaterfall} // true = waterfall, false = equal-height
+  loadData={loadData}
+  renderItem={(item, index, isMasonry) =&gt; /* ... */ null}
+/&gt;</code></pre>
+<p>The prop has priority over everything else. When it changes the active layout is remounted and loads from page 1 again.</p>
+<h3>2. From the first API response</h3>
+<pre><code>&lt;DynamicMasonryView
+  loadData={async (page, pageSize) =&gt; {
+    const res = await fetch("/api/content?page=" + page + "&amp;size=" + pageSize);
+    const json = await res.json();
+    return page === 1
+      ? { data: json.items, hasMore: json.hasMore, isMasonry: json.layoutType === "waterfall" }
+      : { data: json.items, hasMore: json.hasMore };
+  }}
+  renderItem={(item, index, isMasonry) =&gt; /* ... */ null}
+/&gt;</code></pre>
+<p>The component calls <code>loadData(1, pageSize)</code> once on mount, reads <code>isMasonry</code> from the result and caches that first page, so the chosen layout shows it right away and page 1 is not requested a second time. The layout type is read <strong>only once</strong>; later pages do not need to return it.</p>
+<h3>3. Default value</h3>
+<p>If <code>loadData</code> does not return <code>isMasonry</code>, <code>defaultIsMasonry</code> (default <code>true</code>) is used. If the first request fails, <code>onError</code> is called and the default layout is used.</p>
+<h2 id="props">Props</h2>
+<div class="table-wrap"><table><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>isMasonry</code></td><td><code>boolean</code></td><td>–</td><td>Controlled mode. <code>true</code> = waterfall, <code>false</code> = equal-height.</td></tr><tr><td><code>defaultIsMasonry</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Used when <code>loadData</code> does not return <code>isMasonry</code>.</td></tr><tr><td><code>loadData</code></td><td><code>LoadDataFn</code></td><td>–</td><td><code>(page, pageSize) =&gt; Promise&lt;{ data, hasMore, isMasonry? }&gt;</code>.</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index, isMasonry) =&gt; ReactNode</code></td><td>required</td><td>Render function. The last argument tells which layout is active.</td></tr><tr><td><code>waterfallConfig</code></td><td><code>{ minColumnWidth, maxColumnWidth, columns, gap, buffer }</code></td><td><code>{}</code></td><td>Forwarded to <a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a>.</td></tr><tr><td><code>equalHeightConfig</code></td><td><code>{ targetRowHeight, sizeRange, maxItemWidth, maxStretchRatio, gap, buffer }</code></td><td><code>{}</code></td><td>Forwarded to <a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a>.</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>Items requested per page.</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>Maps your data to dimensions.</td></tr><tr><td><code>renderInitialLoader</code></td><td><code>() =&gt; ReactNode</code></td><td>empty block</td><td>Shown while the layout type is being determined.</td></tr><tr><td><code>onLayoutTypeLoaded</code></td><td><code>(isMasonry: boolean) =&gt; void</code></td><td>–</td><td>Called once the layout type is known.</td></tr><tr><td><code>onError</code></td><td><code>(error: Error) =&gt; void</code></td><td>–</td><td>Called when the first request fails.</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Reserved. It has no effect yet.</td></tr></tbody></table></div>
+<h2 id="exports">Exported types</h2>
+<pre><code>import {
+  DynamicMasonryView,
+  ViewType, // enum: ViewType.Waterfall = 1, ViewType.EqualHeight = 2
+} from "react-hybrid-masonry";
+import type { DynamicMasonryViewProps, LoadDataFn } from "react-hybrid-masonry";</code></pre>
+<div class="note"><code>loadData</code> is declared as <code>LoadDataFn&lt;T&gt;</code>; only the first call may include <code>isMasonry</code>. Related: <a href="/react-hybrid-masonry/docs/guides/pagination/">pagination and infinite scroll</a>.</div>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/equal-height/"><small>Previous</small>FullWidthEqualHeightMasonry</a><a rel="next" href="/react-hybrid-masonry/docs/guides/pagination/"><small>Next</small>Pagination &amp; infinite scroll</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

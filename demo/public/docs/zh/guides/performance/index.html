@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 虚拟瀑布流性能调优：buffer、阈值与图片 | React Hybrid Masonry</title>
+    <meta name="description" content="让很长的 React 瀑布流图库保持流畅的实用建议：buffer 与 loadMoreThreshold、稳定的元素引用、图片尺寸、懒加载图片和 memo 化的卡片。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="React 虚拟瀑布流性能调优：buffer、阈值与图片 | React Hybrid Masonry" />
+    <meta property="og:description" content="让很长的 React 瀑布流图库保持流畅的实用建议：buffer 与 loadMoreThreshold、稳定的元素引用、图片尺寸、懒加载图片和 memo 化的卡片。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"性能调优","description":"让很长的 React 瀑布流图库保持流畅的实用建议：buffer 与 loadMoreThreshold、稳定的元素引用、图片尺寸、懒加载图片和 memo 化的卡片。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"性能调优","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/guides/performance/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/" class="current" aria-current="page">性能调优</a><ul class="sub"><li><a href="#built-in">已经做了的优化</a></li><li><a href="#buffer">buffer</a></li><li><a href="#threshold">loadMoreThreshold</a></li><li><a href="#images">图片</a></li><li><a href="#cards">卡片</a></li><li><a href="#page-size">pageSize</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>性能调优</h1>
+        <p class="lead">库已经替你做了什么，以及你自己的卡片需要检查什么。</p>
+<h2 id="built-in">已经做了的优化</h2>
+<ul><li>只有视口内加上 <code>buffer</code> 范围内的元素会被挂载，其余部分在 DOM 里没有任何开销。</li><li>滚动位置每个动画帧最多更新一次（<code>requestAnimationFrame</code>）。</li><li>滚动过程中 item 对象保持引用不变，只有元素或容器宽度变化时才会变，所以做了 memo 的子组件不会在每次滚动时重新渲染。</li><li>布局用 <code>useMemo</code> 缓存，滚动不会重新计算位置。</li></ul>
+<h2 id="buffer">buffer</h2>
+<p><code>buffer</code>（默认 <code>1500</code>）是视口上下一直保持挂载的距离。值越大，快速滚动时空白越少，但挂载的卡片和同时请求的图片也越多；值越小越省，但快速滚动时能看到加载的过程。</p>
+<div class="note">调 <code>buffer</code> 和 <code>loadMoreThreshold</code> 时，请同时观察图片请求数量和你的性能评分，不要只凭画面看起来更好就一直调大。</div>
+<h2 id="threshold">loadMoreThreshold</h2>
+<p><code>loadMoreThreshold</code> 越大，下一次请求开始得越早，能掩盖延迟，但会加载用户可能永远滚不到的数据。请根据接口延迟和页大小来选择。</p>
+<h2 id="images">图片</h2>
+<ul><li>在数据里给每个元素真实的 <code>width</code> 和 <code>height</code>。布局在图片加载前就按它们算好，所以图片到达时不会有任何跳动。</li><li>给图片加上 <code>loading="lazy"</code> 和 <code>decoding="async"</code>，并使用与显示尺寸接近的缩略图。</li><li>使用 <code>object-fit: cover</code>，这样取整后尺寸略有差异时也不会让图片变形。</li></ul>
+<pre><code>&lt;img src={item.thumb} alt={item.title} width={item.width} height={item.height}
+     loading="lazy" decoding="async"
+     style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;</code></pre>
+<h2 id="cards">卡片</h2>
+<ul><li>用 <code>React.memo</code> 包住卡片。因为 item 的引用是稳定的，只有它自己的数据变化时才会重新渲染。</li><li>保持 <code>renderItem</code> 轻量。不要在每张卡片里创建 observer 或很重的状态，能共用就共用。</li><li>始终在返回的元素上设置 <code>key={item.id}</code>。</li></ul>
+<pre><code>const Card = React.memo(function Card({ item }: { item: any }) {
+  return (
+    &lt;div style={{ position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height }}&gt;
+      &lt;img src={item.thumb} alt={item.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  );
+});
+
+&lt;VirtualMasonry renderItem={(item) =&gt; &lt;Card key={item.id} item={item} /&gt;} /* ... */ /&gt;</code></pre>
+<h2 id="page-size">pageSize</h2>
+<p>选一个能填满超过一屏（包括预加载阈值）的页大小。页太小会造成请求连发，页太大会拖慢首屏。可以从 30 到 50 开始尝试。</p>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/guides/responsive/"><small>上一页</small>响应式布局</a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/"><small>下一页</small>等高布局算法详解</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

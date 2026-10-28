@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Hybrid Masonry Docs – Virtual Scrolling Waterfall &amp; Equal-Height Layout | React Hybrid Masonry</title>
+    <meta name="description" content="Documentation for react-hybrid-masonry: a zero-dependency React library for virtual-scrolling masonry (waterfall) and Google Photos style equal-height layouts with infinite scroll and dynamic layout switching." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="React Hybrid Masonry Docs – Virtual Scrolling Waterfall &amp; Equal-Height Layout | React Hybrid Masonry" />
+    <meta property="og:description" content="Documentation for react-hybrid-masonry: a zero-dependency React library for virtual-scrolling masonry (waterfall) and Google Photos style equal-height layouts with infinite scroll and dynamic layout switching." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"React Hybrid Masonry documentation","description":"Documentation for react-hybrid-masonry: a zero-dependency React library for virtual-scrolling masonry (waterfall) and Google Photos style equal-height layouts with infinite scroll and dynamic layout switching.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/" class="current" aria-current="page">Introduction</a><ul class="sub"><li><a href="#features">Features</a></li><li><a href="#install">Installation</a></li><li><a href="#quick-start">Quick start</a></li><li><a href="#choose">Which component should I use?</a></li><li><a href="#data-contract">The data contract</a></li><li><a href="#render-contract">The render contract</a></li></ul></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>React Hybrid Masonry documentation</h1>
+        <p class="lead">A zero-dependency React library for virtual-scrolling <strong>waterfall (masonry)</strong> and <strong>equal-height</strong> layouts, with infinite scroll and layout switching driven by your API.</p>
+<h2 id="features">Features</h2>
+<ul><li><strong>Virtual scrolling</strong> – only items near the viewport are rendered, so very long lists stay fast.</li><li><strong>Waterfall layout</strong> – Pinterest style, each item goes to the shortest column.</li><li><strong>Equal-height layout</strong> – Google Photos style, every row has the same height and each image keeps its aspect ratio.</li><li><strong>Dynamic layout</strong> – let the first API response decide which of the two layouts is used.</li><li><strong>Infinite scroll</strong> – built on <code>IntersectionObserver</code> with a configurable preload distance; only one page request is in flight at a time.</li><li><strong>Responsive</strong> – the container width is observed, columns and rows are recomputed when it changes.</li><li>Written in TypeScript, with a peer dependency on React 16.8 or newer and no other dependencies.</li></ul>
+<h2 id="install">Installation</h2>
+<pre><code>npm install react-hybrid-masonry
+# or
+yarn add react-hybrid-masonry
+# or
+pnpm add react-hybrid-masonry</code></pre>
+<h2 id="quick-start">Quick start</h2>
+<p>All three components share one contract: <code>loadData(page, pageSize)</code> returns <code>{ data, hasMore }</code>, every item has a width and a height, and <code>renderItem</code> draws an item at the position the library computed.</p>
+<pre><code>import { VirtualMasonry } from "react-hybrid-masonry";
+
+export function Gallery() {
+  const loadData = async (page: number, pageSize: number) =&gt; {
+    const res = await fetch("/api/images?page=" + page + "&amp;size=" + pageSize);
+    const json = await res.json();
+    return { data: json.items, hasMore: json.hasMore };
+  };
+
+  return (
+    &lt;VirtualMasonry
+      loadData={loadData}
+      pageSize={30}
+      minColumnWidth={200}
+      maxColumnWidth={350}
+      gap={16}
+      renderItem={(item) =&gt; (
+        &lt;div key={item.id} style={{ position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height }}&gt;
+          &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%" }} /&gt;
+        &lt;/div&gt;
+      )}
+    /&gt;
+  );
+}</code></pre>
+<h2 id="choose">Which component should I use?</h2>
+<div class="table-wrap"><table><thead><tr><th>Component</th><th>Layout</th><th>Use it for</th></tr></thead><tbody><tr><td><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></td><td>Waterfall: equal-width columns, items of different heights</td><td>Image walls, product feeds, cards of different heights</td></tr><tr><td><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></td><td>Rows of equal height that fill the full width</td><td>Photo albums, timelines, search results made of images</td></tr><tr><td><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></td><td>Either of the two, chosen at runtime</td><td>When the back end or the content decides how a list is shown</td></tr></tbody></table></div>
+<h2 id="data-contract">The data contract</h2>
+<p>The components need the size of every item to compute its place before the image has loaded. The size is read from the first of these field pairs that exists: <code>width</code>/<code>height</code>, <code>w</code>/<code>h</code>, <code>imgW</code>/<code>imgH</code>. For any other shape pass <code>mapSize</code>:</p>
+<pre><code>&lt;VirtualMasonry
+  mapSize={(raw) =&gt; ({ width: raw.cover.w, height: raw.cover.h })}
+  /* ... */
+/&gt;</code></pre>
+<p>Every item handed to <code>renderItem</code> is your original object plus the computed <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code> (and <code>widthRatio</code>). Your own fields such as <code>url</code> or <code>title</code> are preserved.</p>
+<h2 id="render-contract">The render contract</h2>
+<ul><li>The root element returned by <code>renderItem</code> must be <strong>absolutely positioned</strong> with the given <code>left</code>, <code>top</code>, <code>width</code> and <code>height</code>.</li><li>Set a stable <code>key</code> (for example <code>item.id</code>) on that element. In the waterfall layout the <code>index</code> argument counts only the items currently rendered and changes while scrolling.</li><li>The components scroll with the <strong>window</strong>, not with an inner container. See <a href="/react-hybrid-masonry/docs/faq/">the FAQ</a>.</li></ul>
+<div class="note">Next: read the page for the component you picked, or jump to the <a href="/react-hybrid-masonry/docs/guides/pagination/">pagination guide</a>.</div>
+<nav class="pager" aria-label="Pages"><span></span><a rel="next" href="/react-hybrid-masonry/docs/virtual-masonry/"><small>Next</small>VirtualMasonry</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

@@ -6,7 +6,7 @@
 
 ## 🎮 在线演示
 
-**[查看在线演示](https://bamboo742.github.io/react-hybrid-masonry/)**
+**[查看在线演示](https://bamboo742.github.io/react-hybrid-masonry/)** · **[完整文档](https://bamboo742.github.io/react-hybrid-masonry/docs/zh/)**
 
 体验所有三种布局模式的交互式示例和代码片段。
 
@@ -207,8 +207,6 @@ function DynamicGallery() {
 | `buffer` | `number` | `1500` | 可视区域外的缓冲区大小(px),越大渲染的内容越多 |
 | `loadMoreThreshold` | `number` | `800` | 预加载阈值(px),距离底部多远时触发加载 |
 | `mapSize` | `(raw: any) => {width: number, height: number}` | - | 映射数据的宽高字段 |
-| `renderLoader` | `(totalHeight: number) => React.ReactNode` | - | 自定义加载状态组件 |
-| `renderNoMore` | `(totalHeight: number) => React.ReactNode` | - | 自定义"没有更多"提示组件 |
 
 ### FullWidthEqualHeightMasonry
 
@@ -229,8 +227,6 @@ function DynamicGallery() {
 | `buffer` | `number` | `1500` | 缓冲区大小(px) |
 | `loadMoreThreshold` | `number` | `500` | 预加载阈值(px) |
 | `mapSize` | `(raw: any) => {width: number, height: number}` | - | 映射数据的宽高字段 |
-| `renderLoader` | `(totalHeight: number) => React.ReactNode` | - | 自定义加载状态 |
-| `renderNoMore` | `(totalHeight: number) => React.ReactNode` | - | 自定义"没有更多"提示 |
 
 ### DynamicMasonryView
 
@@ -266,47 +262,6 @@ type LoadDataFn<T = any> = (
 ```
 
 ## 🎨 自定义样式
-
-### 自定义加载状态和"没有更多"提示
-
-```tsx
-<VirtualMasonry
-  loadData={loadData}
-  renderItem={renderItem}
-  renderLoader={(totalHeight) => (
-    <div
-      style={{
-        position: 'absolute',
-        top: totalHeight,
-        left: 0,
-        right: 0,
-        height: 100,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <div className="custom-loader">加载中...</div>
-    </div>
-  )}
-  renderNoMore={(totalHeight) => (
-    <div
-      style={{
-        position: 'absolute',
-        top: totalHeight,
-        left: 0,
-        right: 0,
-        height: 50,
-        textAlign: 'center',
-        color: '#999',
-        paddingTop: '20px',
-      }}
-    >
-      - 没有更多数据了 -
-    </div>
-  )}
-/>
-```
 
 ### 自定义项目样式
 

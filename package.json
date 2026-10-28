@@ -13,6 +13,7 @@
   "scripts": {
     "build": "rollup -c",
     "build:demo": "vite build",
+    "docs": "node scripts/docs/build.mjs",
     "dev": "vite",
     "preview": "vite preview",
     "type-check": "tsc --project tsconfig.build.json --noEmit",

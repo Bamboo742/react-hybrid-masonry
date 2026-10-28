@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How the Equal-Height (Justified) Layout Algorithm Works | React Hybrid Masonry</title>
+    <meta name="description" content="Step by step explanation of the row-filling algorithm used by FullWidthEqualHeightMasonry: greedy row building, scale calculation, size range clamping, width distribution without rounding drift and the last row rule." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="How the Equal-Height (Justified) Layout Algorithm Works | React Hybrid Masonry" />
+    <meta property="og:description" content="Step by step explanation of the row-filling algorithm used by FullWidthEqualHeightMasonry: greedy row building, scale calculation, size range clamping, width distribution without rounding drift and the last row rule." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"How the equal-height layout works","description":"Step by step explanation of the row-filling algorithm used by FullWidthEqualHeightMasonry: greedy row building, scale calculation, size range clamping, width distribution without rounding drift and the last row rule.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"How the equal-height layout works","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/equal-height-algorithm/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/" class="current" aria-current="page">How the equal-height layout works</a><ul class="sub"><li><a href="#input">Input</a></li><li><a href="#rows">1. Build a row greedily</a></li><li><a href="#height">2. Compute and clamp the row height</a></li><li><a href="#widths">3. Distribute widths without drift</a></li><li><a href="#last">4. The last row</a></li><li><a href="#virtual">5. Virtualization</a></li><li><a href="#tips">Tuning hints</a></li></ul></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>How the equal-height layout works</h1>
+        <p class="lead">The row-filling algorithm, step by step. Useful when you tune <code>maxStretchRatio</code> and <code>sizeRange</code>.</p>
+<h2 id="input">Input</h2>
+<p>Every item has an aspect ratio <code>r = width / height</code>. Using the target row height <code>H</code>, the ideal width of an item is <code>r * H</code>. <code>W</code> is the container width and <code>g</code> the gap.</p>
+<h2 id="rows">1. Build a row greedily</h2>
+<p>Start a row with the next image. Before adding another image, compute the scale needed to make the current row fill the container:</p>
+<pre><code>scale = (W - (n - 1) * g) / sum(r_i * H)   // n images in the row</code></pre>
+<ul><li>If <code>scale &lt;= maxStretchRatio</code>, the row is full enough: close it.</li><li>Otherwise add the next image and test again. Adding an image always brings the scale closer to 1.</li><li>If the row already needs to <strong>shrink</strong> (<code>scale &lt; 1</code>) it is closed as well, with no limit on shrinking.</li></ul>
+<p>Because one image almost always needs a large enlargement to fill a row, this rule produces rows of at least two images without a special case.</p>
+<h2 id="height">2. Compute and clamp the row height</h2>
+<pre><code>rowHeight = H * scale
+rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange</code></pre>
+<p><code>sizeRange</code> is an independent visual density limit, so it is always applied. When the clamp prevents an exact fill, the next step makes the row end at the edge anyway.</p>
+<h2 id="widths">3. Distribute widths without drift</h2>
+<p>Each image gets <code>r_i * rowHeight</code> as its ideal width. To make the row end exactly at the container edge, the right edge of image <code>i</code> is computed from the cumulative share of the ideal widths, then rounded:</p>
+<pre><code>available = W - (n - 1) * g
+rightEdge_i = (sum(ideal_0..i) / sum(ideal_all)) * available + i * g
+width_i     = round(rightEdge_i - x_i)</code></pre>
+<p>Rounding errors therefore never accumulate and are not pushed onto the last image, whose proportions would otherwise differ visibly from its real picture. Every width is then capped at <code>maxItemWidth</code>.</p>
+<h2 id="last">4. The last row</h2>
+<ul><li>The row at the end of the loaded data is <strong>not stretched</strong>; its height is clamped between <code>sizeRange[0]</code> and <code>targetRowHeight</code>.</li><li>If its natural width would overflow the container, all of its images are scaled down by the same factor.</li><li>When another page arrives, the former last row becomes a normal row and is recomputed.</li></ul>
+<h2 id="virtual">5. Virtualization</h2>
+<p>Each item gets <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code> and <code>originalIndex</code>. Only items that intersect the viewport extended by <code>buffer</code> are rendered, using the item's <code>originalIndex</code> as the React key. The total height <code>minHeight</code> of the container is the bottom of the last row.</p>
+<h2 id="tips">Tuning hints</h2>
+<ul><li>Many rows with 2 images means a large <code>targetRowHeight</code> for the container width: lower it or widen <code>sizeRange</code>.</li><li>A very narrow <code>sizeRange</code> makes rows exact but allows only a few combinations; widen it if rows look uneven.</li><li>Lower <code>maxStretchRatio</code> for less enlargement, raise it to close rows earlier.</li></ul>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/guides/performance/"><small>Previous</small>Performance tuning</a><a rel="next" href="/react-hybrid-masonry/docs/faq/"><small>Next</small>FAQ &amp; troubleshooting</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

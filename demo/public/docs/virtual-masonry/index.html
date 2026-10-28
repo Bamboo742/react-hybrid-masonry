@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VirtualMasonry – React Virtual Scrolling Waterfall (Masonry) Layout | React Hybrid Masonry</title>
+    <meta name="description" content="VirtualMasonry API reference: a React waterfall (Pinterest style) layout with virtual scrolling, infinite loading, fixed or width-based column count and SSR-friendly initial items." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="VirtualMasonry – React Virtual Scrolling Waterfall (Masonry) Layout | React Hybrid Masonry" />
+    <meta property="og:description" content="VirtualMasonry API reference: a React waterfall (Pinterest style) layout with virtual scrolling, infinite loading, fixed or width-based column count and SSR-friendly initial items." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"VirtualMasonry","description":"VirtualMasonry API reference: a React waterfall (Pinterest style) layout with virtual scrolling, infinite loading, fixed or width-based column count and SSR-friendly initial items.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"VirtualMasonry","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/virtual-masonry/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/" class="current" aria-current="page">VirtualMasonry</a><ul class="sub"><li><a href="#usage">Usage</a></li><li><a href="#props">Props</a></li><li><a href="#columns">How the column count is chosen</a></li><li><a href="#examples">Examples</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>VirtualMasonry</h1>
+        <p class="lead">Pinterest style waterfall layout: equal-width columns, items keep their aspect ratio and are placed into the shortest column. Only items near the viewport are rendered.</p>
+<h2 id="usage">Usage</h2>
+<pre><code>import { VirtualMasonry } from "react-hybrid-masonry";
+
+&lt;VirtualMasonry
+  loadData={loadData}
+  pageSize={30}
+  minColumnWidth={200}
+  maxColumnWidth={350}
+  gap={16}
+  renderItem={(item) =&gt; (
+    &lt;div
+      style={{
+        position: "absolute",
+        left: item.x,
+        top: item.y,
+        width: item.width,
+        height: item.height,
+      }}
+    &gt;
+      &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  )}
+/&gt;</code></pre>
+<h2 id="props">Props</h2>
+<div class="table-wrap"><table><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>loadData</code></td><td><code>(page, pageSize) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;</code></td><td>–</td><td>Loads one page. Page numbers start at 1. Without it the component stays empty.</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index) =&gt; ReactNode</code></td><td>required</td><td>Renders one item. <code>index</code> is the position among the <strong>currently rendered</strong> items.</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>Items requested per page.</td></tr><tr><td><code>minColumnWidth</code></td><td><code>number</code></td><td><code>200</code></td><td>Minimum column width in px. The calculated column count never makes columns narrower than this.</td></tr><tr><td><code>maxColumnWidth</code></td><td><code>number</code></td><td>–</td><td>Maximum column width in px.</td></tr><tr><td><code>columns</code></td><td><code>number</code></td><td>–</td><td>Fixed column count. Skips the width based calculation.</td></tr><tr><td><code>gap</code></td><td><code>number</code></td><td><code>16</code></td><td>Gap between items, horizontally and vertically, in px.</td></tr><tr><td><code>buffer</code></td><td><code>number</code></td><td><code>1500</code></td><td>Extra distance in px above and below the viewport that is still rendered.</td></tr><tr><td><code>loadMoreThreshold</code></td><td><code>number</code></td><td><code>800</code></td><td>Distance in px from the bottom at which the next page is requested.</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>Maps your data to dimensions. See <a href="/react-hybrid-masonry/docs/#data-contract">the data contract</a>.</td></tr><tr><td><code>initialItems</code></td><td><code>any[]</code></td><td>–</td><td>A first page you already have (for example from SSR). Page 1 is not requested again; loading continues at page 2.</td></tr><tr><td><code>initialHasMore</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Used with <code>initialItems</code>: whether more data exists after the first page.</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Reserved. It has no effect yet.</td></tr></tbody></table></div>
+<h2 id="columns">How the column count is chosen</h2>
+<ol><li>If <code>columns</code> is set, it is used as is.</li><li>Otherwise <code>floor(containerWidth / minColumnWidth)</code> columns are used, at least 1.</li><li>If <code>maxColumnWidth</code> is set and the columns would be wider than that, columns are added one by one (up to 20) until they fit, but a column is <strong>not</strong> added when it would make columns narrower than <code>minColumnWidth</code>. When both limits cannot be met, the minimum wins.</li></ol>
+<p>The column width is <code>(containerWidth - gap * (columns - 1)) / columns</code>, capped at <code>maxColumnWidth</code>. When the cap applies, the grid is <strong>left aligned</strong> and the remaining space stays empty on the right.</p>
+<p>An item's height is <code>columnWidth * (height / width)</code> of its original size, and it is placed into the column that is currently the shortest.</p>
+<h2 id="examples">Examples</h2>
+<h3>Fixed number of columns</h3>
+<pre><code>&lt;VirtualMasonry columns={4} gap={12} loadData={loadData} renderItem={renderCard} /&gt;</code></pre>
+<p>Pick the number per breakpoint with a small hook, see <a href="/react-hybrid-masonry/docs/guides/responsive/">responsive layouts</a>.</p>
+<h3>Start from data you already have</h3>
+<pre><code>&lt;VirtualMasonry
+  initialItems={firstPage.items}
+  initialHasMore={firstPage.hasMore}
+  loadData={loadData} // first call will be page 2
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h3>Item sizes in other fields</h3>
+<pre><code>&lt;VirtualMasonry
+  mapSize={(raw) =&gt; ({ width: raw.imgW, height: raw.imgH })}
+  loadData={loadData}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<div class="note">Related: <a href="/react-hybrid-masonry/docs/guides/pagination/">pagination and infinite scroll</a>, <a href="/react-hybrid-masonry/docs/guides/performance/">performance tuning</a>.</div>
+<nav class="pager" aria-label="Pages"><span></span><a rel="next" href="/react-hybrid-masonry/docs/equal-height/"><small>Next</small>FullWidthEqualHeightMasonry</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

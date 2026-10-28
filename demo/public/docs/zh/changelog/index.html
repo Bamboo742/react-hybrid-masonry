@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-hybrid-masonry 更新记录 | React Hybrid Masonry</title>
+    <meta name="description" content="react-hybrid-masonry 的版本更新：新增 columns 与 initialItems 参数、请求处理修复、重写的等高布局行算法等。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/changelog/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="react-hybrid-masonry 更新记录 | React Hybrid Masonry" />
+    <meta property="og:description" content="react-hybrid-masonry 的版本更新：新增 columns 与 initialItems 参数、请求处理修复、重写的等高布局行算法等。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"更新记录","description":"react-hybrid-masonry 的版本更新：新增 columns 与 initialItems 参数、请求处理修复、重写的等高布局行算法等。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"更新记录","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/changelog/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/changelog/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/" class="current" aria-current="page">更新记录</a><ul class="sub"><li><a href="#unreleased">未发布</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></li></ul></nav>
+      <main>
+        <h1>更新记录</h1>
+        <p class="lead">库的重要变更。</p>
+<h2 id="unreleased">未发布</h2>
+<h3>新增</h3>
+<ul><li><code>VirtualMasonry</code>：新增 <code>columns</code> 固定列数，以及 <code>initialItems</code>、<code>initialHasMore</code>，可从预取好的第一页开始。</li><li><code>DynamicMasonryView</code>：新增 <code>waterfallConfig.columns</code>。</li><li>支持服务端渲染：布局副作用在服务端降级为 <code>useEffect</code>。</li></ul>
+<h3>变更</h3>
+<ul><li>等高布局：新的拼行规则由 <code>maxStretchRatio</code> 驱动；宽度按累计比例分配，舍入误差不再落到最后一张图上；最后一行溢出时统一等比缩小。</li><li>瀑布流：推算出的列数不会让列宽小于 <code>minColumnWidth</code>。</li></ul>
+<h3>修复</h3>
+<ul><li>快速滚动时可能同时发出两个翻页请求，现在用同步判断保证只有一个请求在途。</li><li>请求失败不再无限重试，翻页会停止，直到重新挂载组件。</li><li>窗口在后台标签页被缩放后，容器宽度可能一直是旧值；现在 <code>resize</code> 与 <code>visibilitychange</code> 会重新测量。</li><li>等高布局的滚动位置不再使用缓存的 <code>offsetTop</code>，改为读取 <code>getBoundingClientRect</code>，列表上方内容高度变化也不会出错。</li><li>滚动时可见元素保持引用稳定，做了 memo 的卡片不再在每次滚动事件里重新渲染。</li></ul>
+<h2 id="1.0.1">1.0.1</h2>
+<p><a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a> 上的当前版本：<code>VirtualMasonry</code>、<code>FullWidthEqualHeightMasonry</code> 和 <code>DynamicMasonryView</code>。</p>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/faq/"><small>上一页</small>常见问题</a><span></span></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

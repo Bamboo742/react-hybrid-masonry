@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>在 Next.js 与服务端渲染中使用 react-hybrid-masonry | React Hybrid Masonry</title>
+    <meta name="description" content="如何在 Next.js App Router 与 SSR 中使用 React 瀑布流组件：use client 指令、水合安全、用 initialItems 传入预取的第一页，以及服务端 HTML 里有什么。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/nextjs-ssr/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="在 Next.js 与服务端渲染中使用 react-hybrid-masonry | React Hybrid Masonry" />
+    <meta property="og:description" content="如何在 Next.js App Router 与 SSR 中使用 React 瀑布流组件：use client 指令、水合安全、用 initialItems 传入预取的第一页，以及服务端 HTML 里有什么。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Next.js 与服务端渲染","description":"如何在 Next.js App Router 与 SSR 中使用 React 瀑布流组件：use client 指令、水合安全、用 initialItems 传入预取的第一页，以及服务端 HTML 里有什么。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"Next.js 与 SSR","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/" class="current" aria-current="page">Next.js 与 SSR</a><ul class="sub"><li><a href="#use-client">加上 use client 指令</a></li><li><a href="#initial">传入预取的第一页</a></li><li><a href="#hydration">水合是安全的</a></li><li><a href="#html">服务端 HTML 里有什么</a></li><li><a href="#lazy">懒加载</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>Next.js 与服务端渲染</h1>
+        <p class="lead">哪些能在服务端运行，哪些要等到浏览器里，以及如何交接预取好的第一页。</p>
+<h2 id="use-client">加上 use client 指令</h2>
+<p>这些组件使用了 React hooks，发布时没有带指令。在 Next.js App Router 中，请在客户端文件里引入它们：</p>
+<pre><code>"use client";
+
+import { VirtualMasonry } from "react-hybrid-masonry";
+
+export default function Gallery({ first }: { first: { items: any[]; hasMore: boolean } }) {
+  return (
+    &lt;VirtualMasonry
+      initialItems={first.items}
+      initialHasMore={first.hasMore}
+      loadData={(page, size) =&gt; fetch("/api/images?page=" + page + "&amp;size=" + size).then((r) =&gt; r.json())}
+      renderItem={(item) =&gt; &lt;Card item={item} /&gt;}
+    /&gt;
+  );
+}</code></pre>
+<h2 id="initial">传入预取的第一页</h2>
+<p>在服务端组件里取好第 1 页，作为 <code>initialItems</code> 传入。组件会直接用这份数据开始，<strong>不会</strong>显示加载状态，也<strong>不会</strong>再请求第 1 页；第一次 <code>loadData</code> 调用请求的是第 2 页。</p>
+<pre><code>// app/gallery/page.tsx（服务端组件）
+import Gallery from "./Gallery";
+
+export default async function Page() {
+  const res = await fetch("https://api.example.com/images?page=1&amp;size=30");
+  const first = await res.json();
+  return &lt;Gallery first={{ items: first.items, hasMore: first.hasMore }} /&gt;;
+}</code></pre>
+<div class="note"><code>initialItems</code> 只在 <code>VirtualMasonry</code> 上提供。<code>DynamicMasonryView</code> 和 <code>FullWidthEqualHeightMasonry</code> 的第一页在客户端加载。</div>
+<h2 id="hydration">水合是安全的</h2>
+<p>布局副作用在浏览器里使用 <code>useLayoutEffect</code>，在服务端自动降级为 <code>useEffect</code>。服务端渲染时容器宽度未知，所以两端的首次渲染都是一个空容器，不会出现水合不一致。元素位置会在挂载后、测量到宽度时立刻计算。</p>
+<h2 id="html">服务端 HTML 里有什么</h2>
+<p>因为位置取决于测量到的宽度，即使传了 <code>initialItems</code>，<strong>服务端 HTML 里也不包含卡片</strong>。如果搜索引擎必须看到这些内容，请在布局旁边额外渲染一份可被抓取的列表（比如页面里的链接，或一个 <code>&lt;noscript&gt;</code> 块），或者把这个图库用在不需要被收录的内容上。</p>
+<h2 id="lazy">懒加载</h2>
+<p>布局只在浏览器里有意义，所以可以把它从首屏 bundle 里拆出去：</p>
+<pre><code>import dynamic from "next/dynamic";
+
+const Gallery = dynamic(() =&gt; import("./Gallery"), { ssr: false });</code></pre>
+<p>只有在你不需要靠 <code>initialItems</code> 来避免加载闪烁时才这样用。</p>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/guides/pagination/"><small>上一页</small>分页与无限滚动</a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/responsive/"><small>下一页</small>响应式布局</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

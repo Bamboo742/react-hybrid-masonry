@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FullWidthEqualHeightMasonry – React 等高（Justified）图片布局 | React Hybrid Masonry</title>
+    <meta name="description" content="FullWidthEqualHeightMasonry API 参考：Google Photos 风格的 React 等高布局，每行高度一致并铺满容器宽度，支持虚拟滚动和无限加载。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/equal-height/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="FullWidthEqualHeightMasonry – React 等高（Justified）图片布局 | React Hybrid Masonry" />
+    <meta property="og:description" content="FullWidthEqualHeightMasonry API 参考：Google Photos 风格的 React 等高布局，每行高度一致并铺满容器宽度，支持虚拟滚动和无限加载。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"FullWidthEqualHeightMasonry","description":"FullWidthEqualHeightMasonry API 参考：Google Photos 风格的 React 等高布局，每行高度一致并铺满容器宽度，支持虚拟滚动和无限加载。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"FullWidthEqualHeightMasonry","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/equal-height/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/equal-height/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/" class="current" aria-current="page">FullWidthEqualHeightMasonry</a><ul class="sub"><li><a href="#usage">用法</a></li><li><a href="#props">属性</a></li><li><a href="#behaviour">行为说明</a></li><li><a href="#tuning">调参建议</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>FullWidthEqualHeightMasonry</h1>
+        <p class="lead">Google Photos 风格布局：图片保持宽高比，每一行高度相同，并按容器宽度精确拉伸或收缩来铺满。</p>
+<h2 id="usage">用法</h2>
+<pre><code>import { FullWidthEqualHeightMasonry } from "react-hybrid-masonry";
+
+&lt;FullWidthEqualHeightMasonry
+  loadData={loadData}
+  pageSize={30}
+  targetRowHeight={245}
+  sizeRange={[230, 260]}
+  maxItemWidth={975}
+  gap={8}
+  renderItem={(item) =&gt; (
+    &lt;div
+      style={{
+        position: "absolute",
+        left: item.x,
+        top: item.y,
+        width: item.width,
+        height: item.height,
+      }}
+    &gt;
+      &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  )}
+/&gt;</code></pre>
+<h2 id="props">属性</h2>
+<div class="table-wrap"><table><thead><tr><th>属性</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>loadData</code></td><td><code>(page, pageSize) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;</code></td><td>–</td><td>加载一页数据，页码从 1 开始。</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index) =&gt; ReactNode</code></td><td>必填</td><td>渲染单个已定位的元素。<code>index</code> 是它在全部已加载数据中的序号。</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>每页请求的数据量。</td></tr><tr><td><code>targetRowHeight</code></td><td><code>number</code></td><td><code>245</code></td><td>目标行高，实际行高会在 <code>sizeRange</code> 内调整。</td></tr><tr><td><code>sizeRange</code></td><td><code>[number, number]</code></td><td><code>[230, 260]</code></td><td>允许的行高范围 <code>[最小, 最大]</code>。</td></tr><tr><td><code>maxItemWidth</code></td><td><code>number</code></td><td><code>975</code></td><td>单个元素的最大宽度。</td></tr><tr><td><code>maxStretchRatio</code></td><td><code>number</code></td><td><code>1.5</code></td><td>一行会不断加入新图片，直到填满整行所需的放大倍数不超过该值；缩小不设上限。</td></tr><tr><td><code>gap</code></td><td><code>number</code></td><td><code>8</code></td><td>元素之间的水平和垂直间距（px）。</td></tr><tr><td><code>buffer</code></td><td><code>number</code></td><td><code>1500</code></td><td>视口周围仍会渲染的缓冲距离（px）。</td></tr><tr><td><code>loadMoreThreshold</code></td><td><code>number</code></td><td><code>500</code></td><td>距离底部多远（px）时开始请求下一页。</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>把你的数据映射成宽高。</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>预留参数，目前没有效果。</td></tr></tbody></table></div>
+<h2 id="behaviour">行为说明</h2>
+<ul><li>行是贪心地拼出来的：只要填满当前这一行所需的放大倍数超过 <code>maxStretchRatio</code>，就继续加入图片；需要缩小时则不限制缩小的幅度。</li><li>行高随后被限制在 <code>sizeRange</code> 内，宽度再按比例分配，使整行刚好结束在容器边缘，不会把舍入误差留给最后一张图。</li><li><strong>最后一行不会被拉伸</strong>，保持自然比例（高度最多为 <code>targetRowHeight</code>），图片很少时不会被放大。下一页到来后，这一行会重新计算。</li><li>任何元素都不会比 <code>maxItemWidth</code> 更宽，所以很宽的全景图不会占满整行。</li></ul>
+<p>完整流程见<a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a>。</p>
+<h2 id="tuning">调参建议</h2>
+<div class="table-wrap"><table><thead><tr><th>目标</th><th>做法</th></tr></thead><tbody><tr><td>图片更大，每行更少</td><td>提高 <code>targetRowHeight</code> 和 <code>sizeRange</code>，例如 <code>320</code> 和 <code>[300, 360]</code>。</td></tr><tr><td>对齐更严格</td><td>缩小 <code>sizeRange</code>；此时每行靠选择不同的图片数量来铺满，而不是靠缩放。</td></tr><tr><td>避免行被明显放大</td><td>把 <code>maxStretchRatio</code> 降到 <code>1.2</code> 左右；一行会放进更多图片后才结束。</td></tr><tr><td>避免超大的全景图</td><td>降低 <code>maxItemWidth</code>。</td></tr></tbody></table></div>
+<div class="note">相关：<a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a>、<a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a>。</div>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/virtual-masonry/"><small>上一页</small>VirtualMasonry</a><a rel="next" href="/react-hybrid-masonry/docs/zh/dynamic-view/"><small>下一页</small>DynamicMasonryView</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

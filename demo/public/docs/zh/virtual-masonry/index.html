@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VirtualMasonry – React 虚拟滚动瀑布流（Masonry）布局 | React Hybrid Masonry</title>
+    <meta name="description" content="VirtualMasonry API 参考：React 瀑布流（Pinterest 风格）布局，支持虚拟滚动、无限加载、固定或按宽度推算列数，以及适合 SSR 的初始数据。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/virtual-masonry/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="VirtualMasonry – React 虚拟滚动瀑布流（Masonry）布局 | React Hybrid Masonry" />
+    <meta property="og:description" content="VirtualMasonry API 参考：React 瀑布流（Pinterest 风格）布局，支持虚拟滚动、无限加载、固定或按宽度推算列数，以及适合 SSR 的初始数据。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"VirtualMasonry","description":"VirtualMasonry API 参考：React 瀑布流（Pinterest 风格）布局，支持虚拟滚动、无限加载、固定或按宽度推算列数，以及适合 SSR 的初始数据。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"VirtualMasonry","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/virtual-masonry/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/virtual-masonry/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/" class="current" aria-current="page">VirtualMasonry</a><ul class="sub"><li><a href="#usage">用法</a></li><li><a href="#props">属性</a></li><li><a href="#columns">列数如何确定</a></li><li><a href="#examples">示例</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>VirtualMasonry</h1>
+        <p class="lead">Pinterest 风格的瀑布流布局：列宽相同，元素保持宽高比，放进当前最短的一列。只渲染视口附近的元素。</p>
+<h2 id="usage">用法</h2>
+<pre><code>import { VirtualMasonry } from "react-hybrid-masonry";
+
+&lt;VirtualMasonry
+  loadData={loadData}
+  pageSize={30}
+  minColumnWidth={200}
+  maxColumnWidth={350}
+  gap={16}
+  renderItem={(item) =&gt; (
+    &lt;div
+      style={{
+        position: "absolute",
+        left: item.x,
+        top: item.y,
+        width: item.width,
+        height: item.height,
+      }}
+    &gt;
+      &lt;img src={item.url} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  )}
+/&gt;</code></pre>
+<h2 id="props">属性</h2>
+<div class="table-wrap"><table><thead><tr><th>属性</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>loadData</code></td><td><code>(page, pageSize) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;</code></td><td>–</td><td>加载一页数据，页码从 1 开始。不传则组件保持为空。</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index) =&gt; ReactNode</code></td><td>必填</td><td>渲染单个元素。<code>index</code> 是它在<strong>当前已渲染</strong>元素中的序号。</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>每页请求的数据量。</td></tr><tr><td><code>minColumnWidth</code></td><td><code>number</code></td><td><code>200</code></td><td>最小列宽（px）。推算出的列数不会让列宽比它更窄。</td></tr><tr><td><code>maxColumnWidth</code></td><td><code>number</code></td><td>–</td><td>最大列宽（px）。</td></tr><tr><td><code>columns</code></td><td><code>number</code></td><td>–</td><td>直接指定列数，不再按宽度推算。</td></tr><tr><td><code>gap</code></td><td><code>number</code></td><td><code>16</code></td><td>元素之间的水平和垂直间距（px）。</td></tr><tr><td><code>buffer</code></td><td><code>number</code></td><td><code>1500</code></td><td>视口上下仍会渲染的缓冲距离（px）。</td></tr><tr><td><code>loadMoreThreshold</code></td><td><code>number</code></td><td><code>800</code></td><td>距离底部多远（px）时开始请求下一页。</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>把你的数据映射成宽高，见<a href="/react-hybrid-masonry/docs/zh/#data-contract">数据约定</a>。</td></tr><tr><td><code>initialItems</code></td><td><code>any[]</code></td><td>–</td><td>已经拿到的第一页数据（如 SSR 预取）。传入后不会再请求第 1 页，下一次从第 2 页开始。</td></tr><tr><td><code>initialHasMore</code></td><td><code>boolean</code></td><td><code>true</code></td><td>配合 <code>initialItems</code>，表示首屏之后是否还有更多数据。</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>预留参数，目前没有效果。</td></tr></tbody></table></div>
+<h2 id="columns">列数如何确定</h2>
+<ol><li>设置了 <code>columns</code> 就直接使用它。</li><li>否则使用 <code>floor(容器宽度 / minColumnWidth)</code> 列，至少 1 列。</li><li>如果设置了 <code>maxColumnWidth</code>，而列宽超过了它，就逐列增加（最多 20 列）直到不超过；但如果再加一列会让列宽小于 <code>minColumnWidth</code>，就<strong>不再增加</strong>。两个限制无法同时满足时，以最小列宽为准。</li></ol>
+<p>列宽为 <code>(容器宽度 - gap * (列数 - 1)) / 列数</code>，并以 <code>maxColumnWidth</code> 为上限。上限生效时，网格是<strong>靠左排列</strong>的，右侧留空。</p>
+<p>元素高度为 <code>列宽 * (原始高度 / 原始宽度)</code>，放进当前最矮的那一列。</p>
+<h2 id="examples">示例</h2>
+<h3>固定列数</h3>
+<pre><code>&lt;VirtualMasonry columns={4} gap={12} loadData={loadData} renderItem={renderCard} /&gt;</code></pre>
+<p>按断点选择列数可以用一个小 hook，见<a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a>。</p>
+<h3>从已有数据开始</h3>
+<pre><code>&lt;VirtualMasonry
+  initialItems={firstPage.items}
+  initialHasMore={firstPage.hasMore}
+  loadData={loadData} // 第一次调用请求的是第 2 页
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h3>尺寸在其他字段里</h3>
+<pre><code>&lt;VirtualMasonry
+  mapSize={(raw) =&gt; ({ width: raw.imgW, height: raw.imgH })}
+  loadData={loadData}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<div class="note">相关：<a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a>、<a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a>。</div>
+<nav class="pager" aria-label="翻页"><span></span><a rel="next" href="/react-hybrid-masonry/docs/zh/equal-height/"><small>下一页</small>FullWidthEqualHeightMasonry</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

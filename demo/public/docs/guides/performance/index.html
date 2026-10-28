@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance Tuning for React Virtual Masonry: buffer, threshold and images | React Hybrid Masonry</title>
+    <meta name="description" content="Practical tips to keep a long React masonry gallery smooth: buffer and loadMoreThreshold, stable item references, image dimensions, lazy images and memoized cards." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/performance/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Performance Tuning for React Virtual Masonry: buffer, threshold and images | React Hybrid Masonry" />
+    <meta property="og:description" content="Practical tips to keep a long React masonry gallery smooth: buffer and loadMoreThreshold, stable item references, image dimensions, lazy images and memoized cards." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Performance tuning","description":"Practical tips to keep a long React masonry gallery smooth: buffer and loadMoreThreshold, stable item references, image dimensions, lazy images and memoized cards.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"Performance tuning","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/performance/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/guides/performance/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/" class="current" aria-current="page">Performance tuning</a><ul class="sub"><li><a href="#built-in">What is already optimized</a></li><li><a href="#buffer">buffer</a></li><li><a href="#threshold">loadMoreThreshold</a></li><li><a href="#images">Images</a></li><li><a href="#cards">Cards</a></li><li><a href="#page-size">pageSize</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>Performance tuning</h1>
+        <p class="lead">What the library does for you, and what to check in your own cards.</p>
+<h2 id="built-in">What is already optimized</h2>
+<ul><li>Only items inside the viewport plus <code>buffer</code> are mounted; the rest of the list costs nothing in the DOM.</li><li>The scroll position is updated at most once per animation frame (<code>requestAnimationFrame</code>).</li><li>Item objects keep their identity while scrolling. They only change when items or the container width change, so memoized children do not re-render on every scroll.</li><li>Layouts are cached with <code>useMemo</code>; scrolling does not recompute positions.</li></ul>
+<h2 id="buffer">buffer</h2>
+<p><code>buffer</code> (default <code>1500</code>) is the distance above and below the viewport that stays mounted. A larger value shows fewer blank areas when scrolling fast but mounts more cards and requests more images at once. A smaller value saves work but reveals the loading process on fast scrolls.</p>
+<div class="note">Tune <code>buffer</code> and <code>loadMoreThreshold</code> while looking at the number of images requested and at your performance scores, do not just increase them until the picture looks better.</div>
+<h2 id="threshold">loadMoreThreshold</h2>
+<p>A larger <code>loadMoreThreshold</code> starts the next request earlier, which hides latency, but loads data users may never scroll to. Choose it according to your API latency and page size.</p>
+<h2 id="images">Images</h2>
+<ul><li>Give every item its real <code>width</code> and <code>height</code> in the data. The layout is computed from them before the image loads, so nothing jumps when images arrive.</li><li>Use <code>loading="lazy"</code> and <code>decoding="async"</code> on images, and serve thumbnails near the displayed size.</li><li>Use <code>object-fit: cover</code> so a slightly different rounded size never distorts the picture.</li></ul>
+<pre><code>&lt;img src={item.thumb} alt={item.title} width={item.width} height={item.height}
+     loading="lazy" decoding="async"
+     style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;</code></pre>
+<h2 id="cards">Cards</h2>
+<ul><li>Wrap the card in <code>React.memo</code>. Because item identities are stable, it re-renders only when its item changes.</li><li>Keep <code>renderItem</code> cheap. Do not create observers or heavy state in every card; use a shared one where possible.</li><li>Always set <code>key={item.id}</code> on the returned element.</li></ul>
+<pre><code>const Card = React.memo(function Card({ item }: { item: any }) {
+  return (
+    &lt;div style={{ position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height }}&gt;
+      &lt;img src={item.thumb} alt={item.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} /&gt;
+    &lt;/div&gt;
+  );
+});
+
+&lt;VirtualMasonry renderItem={(item) =&gt; &lt;Card key={item.id} item={item} /&gt;} /* ... */ /&gt;</code></pre>
+<h2 id="page-size">pageSize</h2>
+<p>Choose a page size that fills more than one screen including the threshold. Pages that are too small cause request chains; pages that are too large delay the first paint. 30 to 50 is a good starting range.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/guides/responsive/"><small>Previous</small>Responsive layouts</a><a rel="next" href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/"><small>Next</small>How the equal-height layout works</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

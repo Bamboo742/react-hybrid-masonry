@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Masonry Layouts in React: Columns per Breakpoint | React Hybrid Masonry</title>
+    <meta name="description" content="How react-hybrid-masonry reacts to container width changes, how to choose the column count per breakpoint and how the equal-height layout adapts to different screens." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/responsive/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Responsive Masonry Layouts in React: Columns per Breakpoint | React Hybrid Masonry" />
+    <meta property="og:description" content="How react-hybrid-masonry reacts to container width changes, how to choose the column count per breakpoint and how the equal-height layout adapts to different screens." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Responsive layouts","description":"How react-hybrid-masonry reacts to container width changes, how to choose the column count per breakpoint and how the equal-height layout adapts to different screens.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"Responsive layouts","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/responsive/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/guides/responsive/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/">Pagination &amp; infinite scroll</a></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/" class="current" aria-current="page">Responsive layouts</a><ul class="sub"><li><a href="#measure">How the width is measured</a></li><li><a href="#waterfall">Waterfall: by width limits</a></li><li><a href="#breakpoints">Waterfall: columns per breakpoint</a></li><li><a href="#equal-height">Equal-height rows</a></li><li><a href="#cost">Cost of resizing</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>Responsive layouts</h1>
+        <p class="lead">The layout follows the container width. Here is how to control what it does at each size.</p>
+<h2 id="measure">How the width is measured</h2>
+<p>The width of the layout container (<code>100%</code> of its parent) is read on mount and again on <code>ResizeObserver</code> notifications, window <code>resize</code> and <code>visibilitychange</code>. The extra listeners keep the layout correct when the window was resized while the tab was in the background. The state is only updated when the width actually changed.</p>
+<p>The parent must therefore have a real width. A hidden parent (<code>display: none</code>) renders nothing until it is shown.</p>
+<h2 id="waterfall">Waterfall: by width limits</h2>
+<p>With <code>minColumnWidth</code> and <code>maxColumnWidth</code> the column count follows the width, see <a href="/react-hybrid-masonry/docs/virtual-masonry/#columns">how the column count is chosen</a>. This works well when you only need columns of a sensible size.</p>
+<h2 id="breakpoints">Waterfall: columns per breakpoint</h2>
+<p>When a design asks for an exact number of columns at specific widths, compute it yourself and pass <code>columns</code>:</p>
+<pre><code>import { useEffect, useState } from "react";
+
+function useColumns() {
+  const [columns, setColumns] = useState(2);
+  useEffect(() =&gt; {
+    const update = () =&gt; {
+      const w = window.innerWidth;
+      setColumns(w &gt;= 1600 ? 6 : w &gt;= 1280 ? 5 : w &gt;= 992 ? 4 : w &gt;= 640 ? 3 : 2);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () =&gt; window.removeEventListener("resize", update);
+  }, []);
+  return columns;
+}
+
+function Gallery() {
+  const columns = useColumns();
+  return &lt;VirtualMasonry columns={columns} gap={16} loadData={loadData} renderItem={renderCard} /&gt;;
+}</code></pre>
+<p>The same works for <code>waterfallConfig={{ columns }}</code> in <code>DynamicMasonryView</code>.</p>
+<h2 id="equal-height">Equal-height rows</h2>
+<p>The equal-height layout has no column count: rows are rebuilt for every width by the same rule, so the number of images per row changes by itself. Adjust the look per breakpoint by passing different <code>targetRowHeight</code> and <code>sizeRange</code>, for example smaller rows on phones:</p>
+<pre><code>const small = window.innerWidth &lt; 640;
+
+&lt;FullWidthEqualHeightMasonry
+  targetRowHeight={small ? 140 : 245}
+  sizeRange={small ? [120, 170] : [230, 260]}
+  gap={small ? 4 : 8}
+  loadData={loadData}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h2 id="cost">Cost of resizing</h2>
+<p>Every width change recomputes the layout of all loaded items. It is cheap for thousands of items, but avoid changing <code>gap</code>, <code>columns</code> or size options on every animation frame.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/guides/nextjs-ssr/"><small>Previous</small>Next.js &amp; SSR</a><a rel="next" href="/react-hybrid-masonry/docs/guides/performance/"><small>Next</small>Performance tuning</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

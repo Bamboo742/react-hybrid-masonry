@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagination and Infinite Scroll in react-hybrid-masonry | React Hybrid Masonry</title>
+    <meta name="description" content="How loadData, hasMore, loadMoreThreshold and request concurrency work in react-hybrid-masonry, how failures are handled, and how to reset a list when filters change." />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Pagination and Infinite Scroll in react-hybrid-masonry | React Hybrid Masonry" />
+    <meta property="og:description" content="How loadData, hasMore, loadMoreThreshold and request concurrency work in react-hybrid-masonry, how failures are handled, and how to reset a list when filters change." />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Pagination and infinite scroll","description":"How loadData, hasMore, loadMoreThreshold and request concurrency work in react-hybrid-masonry, how failures are handled, and how to reset a list when filters change.","inLanguage":"en","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/"},{"@type":"ListItem","position":3,"name":"Pagination & infinite scroll","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="Site">
+          <a href="/react-hybrid-masonry/">Live demo</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/zh/guides/pagination/" hreflang="zh-CN" lang="zh-CN">简体中文</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="Documentation"><ul><li class="group">Getting started</li><li><a href="/react-hybrid-masonry/docs/">Introduction</a></li><li class="group">Components</li><li><a href="/react-hybrid-masonry/docs/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/dynamic-view/">DynamicMasonryView</a></li><li class="group">Guides</li><li><a href="/react-hybrid-masonry/docs/guides/pagination/" class="current" aria-current="page">Pagination &amp; infinite scroll</a><ul class="sub"><li><a href="#contract">The loadData contract</a></li><li><a href="#trigger">When the next page starts</a></li><li><a href="#concurrency">One request at a time</a></li><li><a href="#errors">When a request fails</a></li><li><a href="#reset">Starting over when filters change</a></li><li><a href="#dynamic">With DynamicMasonryView</a></li><li><a href="#keys">Unique items</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/guides/nextjs-ssr/">Next.js &amp; SSR</a></li><li><a href="/react-hybrid-masonry/docs/guides/responsive/">Responsive layouts</a></li><li><a href="/react-hybrid-masonry/docs/guides/performance/">Performance tuning</a></li><li><a href="/react-hybrid-masonry/docs/guides/equal-height-algorithm/">How the equal-height layout works</a></li><li class="group">Reference</li><li><a href="/react-hybrid-masonry/docs/faq/">FAQ &amp; troubleshooting</a></li><li><a href="/react-hybrid-masonry/docs/changelog/">Changelog</a></li></ul></nav>
+      <main>
+        <h1>Pagination and infinite scroll</h1>
+        <p class="lead">How pages are requested, when the next one starts, what happens on errors and how to start over.</p>
+<h2 id="contract">The loadData contract</h2>
+<pre><code>type LoadData = (
+  page: number, // starts at 1 and increases by 1 for every successful request
+  pageSize: number,
+) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;;</code></pre>
+<p>The component keeps all loaded items. Return only the new page from <code>loadData</code>; the library appends it. Page numbers are tracked inside the component, you do not have to count them.</p>
+<h2 id="trigger">When the next page starts</h2>
+<p>A 1px marker sits at the bottom of the layout. An <code>IntersectionObserver</code> with <code>rootMargin: loadMoreThreshold</code> watches it, so the next request starts when the bottom is <code>loadMoreThreshold</code> px away from the viewport. After every page finishes the observer is subscribed again, which re-checks the current state: if the marker is still near the viewport (a fast scroll outran the content) the next page starts immediately.</p>
+<ul><li>Raise <code>loadMoreThreshold</code> if users scroll fast or your API is slow.</li><li>Make sure <code>pageSize</code> fills more than a screen. With very small pages the marker stays visible after each response and requests chain one after another.</li></ul>
+<h2 id="concurrency">One request at a time</h2>
+<p>A new request never starts while another is running. The guard is synchronous, so even a burst of triggers in the same frame results in a single request, and responses cannot arrive out of page order.</p>
+<h2 id="errors">When a request fails</h2>
+<p>A rejected <code>loadData</code> is logged with <code>console.error</code> and <strong>automatic paging stops</strong> (<code>hasMore</code> becomes false). This prevents a broken endpoint from being called in an endless loop while the marker is still visible. Choose how you want to recover:</p>
+<ul><li>Remount the component with a new <code>key</code> to start again from page 1.</li><li>Catch errors inside your <code>loadData</code> and return <code>{ data: [], hasMore: true }</code> after your own retry logic, if you want paging to continue.</li></ul>
+<h2 id="reset">Starting over when filters change</h2>
+<p>The component loads page 1 on mount and never reloads by itself. When the query changes, remount it:</p>
+<pre><code>&lt;VirtualMasonry
+  key={JSON.stringify(filters)}
+  loadData={(page, size) =&gt; fetchImages({ ...filters, page, size })}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h2 id="dynamic">With DynamicMasonryView</h2>
+<p><code>DynamicMasonryView</code> calls page 1 itself to find the layout type and hands that response to the inner layout, so page 1 is requested once. Changing the controlled <code>isMasonry</code> prop remounts the inner layout and requests page 1 again.</p>
+<h2 id="keys">Unique items</h2>
+<p>The library does not remove duplicates. If your API can return the same record on two pages (for example when new items are inserted while the user scrolls), de-duplicate inside <code>loadData</code> and keep <code>key</code> stable and unique.</p>
+<nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/dynamic-view/"><small>Previous</small>DynamicMasonryView</a><a rel="next" href="/react-hybrid-masonry/docs/guides/nextjs-ssr/"><small>Next</small>Next.js &amp; SSR</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>

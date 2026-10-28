@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-hybrid-masonry 的分页与无限滚动 | React Hybrid Masonry</title>
+    <meta name="description" content="react-hybrid-masonry 中 loadData、hasMore、loadMoreThreshold 与请求并发控制的工作方式，失败时如何处理，以及筛选条件变化时如何重置列表。" />
+    <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/" />
+    <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/" />
+    <link rel="alternate" hreflang="x-default" href="https://bamboo742.github.io/react-hybrid-masonry/docs/guides/pagination/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="React Hybrid Masonry" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="react-hybrid-masonry 的分页与无限滚动 | React Hybrid Masonry" />
+    <meta property="og:description" content="react-hybrid-masonry 中 loadData、hasMore、loadMoreThreshold 与请求并发控制的工作方式，失败时如何处理，以及筛选条件变化时如何重置列表。" />
+    <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"分页与无限滚动","description":"react-hybrid-masonry 中 loadData、hasMore、loadMoreThreshold 与请求并发控制的工作方式，失败时如何处理，以及筛选条件变化时如何重置列表。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"分页与无限滚动","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/guides/pagination/"}]}]}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
+        <nav aria-label="站点">
+          <a href="/react-hybrid-masonry/">在线演示</a>
+          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
+          <a href="/react-hybrid-masonry/docs/guides/pagination/" hreflang="en" lang="en">English</a>
+        </nav>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/">DynamicMasonryView</a></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/" class="current" aria-current="page">分页与无限滚动</a><ul class="sub"><li><a href="#contract">loadData 约定</a></li><li><a href="#trigger">下一页何时开始</a></li><li><a href="#concurrency">同一时间只有一个请求</a></li><li><a href="#errors">请求失败时</a></li><li><a href="#reset">筛选条件变化时重新开始</a></li><li><a href="#dynamic">配合 DynamicMasonryView</a></li><li><a href="#keys">去重</a></li></ul></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <main>
+        <h1>分页与无限滚动</h1>
+        <p class="lead">页是如何被请求的、下一页何时开始、出错时会怎样，以及如何重新开始。</p>
+<h2 id="contract">loadData 约定</h2>
+<pre><code>type LoadData = (
+  page: number, // 从 1 开始，每成功请求一次加 1
+  pageSize: number,
+) =&gt; Promise&lt;{ data: any[]; hasMore: boolean }&gt;;</code></pre>
+<p>组件会保存所有已加载的元素。<code>loadData</code> 只需返回新的一页，库会把它追加进去。页码由组件内部维护，不需要你自己计数。</p>
+<h2 id="trigger">下一页何时开始</h2>
+<p>布局底部有一个 1px 的标记元素，一个 <code>rootMargin</code> 为 <code>loadMoreThreshold</code> 的 <code>IntersectionObserver</code> 监听它，所以当底部距离视口还有 <code>loadMoreThreshold</code> px 时就会开始请求下一页。每一页完成后，观察器会重新订阅并立刻检查当前状态：如果标记元素仍然在视口附近（快速滚动超过了内容），就马上开始下一页。</p>
+<ul><li>用户滚动很快或接口较慢时，调大 <code>loadMoreThreshold</code>。</li><li>确保 <code>pageSize</code> 能填满超过一屏。页太小的话，每次响应后标记元素仍然可见，请求会一个接一个连续发出。</li></ul>
+<h2 id="concurrency">同一时间只有一个请求</h2>
+<p>已有请求在进行时，不会再开始新的请求。这个判断是同步的，所以同一帧里连续触发多次也只会发出一个请求，响应也不会乱序。</p>
+<h2 id="errors">请求失败时</h2>
+<p><code>loadData</code> 被 reject 时，会用 <code>console.error</code> 记录，并<strong>停止自动翻页</strong>（<code>hasMore</code> 变为 false），避免标记元素仍可见时，坏掉的接口被无限循环调用。你可以按需选择恢复方式：</p>
+<ul><li>用新的 <code>key</code> 重新挂载组件，从第 1 页重新开始。</li><li>在你自己的 <code>loadData</code> 里捕获错误，完成自己的重试后，返回 <code>{ data: [], hasMore: true }</code>，让翻页继续。</li></ul>
+<h2 id="reset">筛选条件变化时重新开始</h2>
+<p>组件挂载时加载第 1 页，之后不会自己重新加载。查询条件变化时，请重新挂载它：</p>
+<pre><code>&lt;VirtualMasonry
+  key={JSON.stringify(filters)}
+  loadData={(page, size) =&gt; fetchImages({ ...filters, page, size })}
+  renderItem={renderCard}
+/&gt;</code></pre>
+<h2 id="dynamic">配合 DynamicMasonryView</h2>
+<p><code>DynamicMasonryView</code> 会自己调用第 1 页来获取布局类型，并把这份响应交给内部布局，所以第 1 页只请求一次。受控的 <code>isMasonry</code> 属性变化会重新挂载内部布局，并再次请求第 1 页。</p>
+<h2 id="keys">去重</h2>
+<p>库不会去除重复数据。如果你的接口可能在两页里返回同一条记录（比如用户滚动期间有新数据插入），请在 <code>loadData</code> 里自行去重，并保证 <code>key</code> 稳定且唯一。</p>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/dynamic-view/"><small>上一页</small>DynamicMasonryView</a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/"><small>下一页</small>Next.js 与 SSR</a></nav>
+      </main>
+    </div>
+    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+  </body>
+</html>
