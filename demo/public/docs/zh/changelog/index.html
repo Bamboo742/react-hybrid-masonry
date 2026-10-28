@@ -45,7 +45,7 @@
       <main>
         <h1>更新记录</h1>
         <p class="lead">库的重要变更。</p>
-<h2 id="unreleased">未发布</h2>
+<h2 id="1.1.0">1.1.0</h2>
 <h3>新增</h3>
 <ul><li><code>VirtualMasonry</code>：新增 <code>columns</code> 固定列数，以及 <code>initialItems</code>、<code>initialHasMore</code>，可从预取好的第一页开始。</li><li><code>DynamicMasonryView</code>：新增 <code>waterfallConfig.columns</code>。</li><li>支持服务端渲染：布局副作用在服务端降级为 <code>useEffect</code>。</li></ul>
 <h3>变更</h3>
@@ -53,10 +53,10 @@
 <h3>修复</h3>
 <ul><li>快速滚动时可能同时发出两个翻页请求，现在用同步判断保证只有一个请求在途。</li><li>请求失败不再无限重试，翻页会停止，直到重新挂载组件。</li><li>窗口在后台标签页被缩放后，容器宽度可能一直是旧值；现在 <code>resize</code> 与 <code>visibilitychange</code> 会重新测量。</li><li>等高布局的滚动位置不再使用缓存的 <code>offsetTop</code>，改为读取 <code>getBoundingClientRect</code>，列表上方内容高度变化也不会出错。</li><li>滚动时可见元素保持引用稳定，做了 memo 的卡片不再在每次滚动事件里重新渲染。</li></ul>
 <h2 id="1.0.1">1.0.1</h2>
-<p><a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a> 上的当前版本：<code>VirtualMasonry</code>、<code>FullWidthEqualHeightMasonry</code> 和 <code>DynamicMasonryView</code>。</p>
+<p>首个发布到 <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a> 的版本：<code>VirtualMasonry</code>、<code>FullWidthEqualHeightMasonry</code> 和 <code>DynamicMasonryView</code>。</p>
 <nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/faq/"><small>上一页</small><span>常见问题</span></a><span></span></nav>
       </main>
-      <aside class="toc" aria-label="本页目录"><p class="toc-title">本页目录</p><ul><li><a href="#unreleased">未发布</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></aside>
+      <aside class="toc" aria-label="本页目录"><p class="toc-title">本页目录</p><ul><li><a href="#1.1.0">1.1.0</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></aside>
     </div>
     <footer class="site-footer">
       <div class="inner">

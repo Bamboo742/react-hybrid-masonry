@@ -45,7 +45,7 @@
       <main>
         <h1>Changelog</h1>
         <p class="lead">Notable changes to the library.</p>
-<h2 id="unreleased">Unreleased</h2>
+<h2 id="1.1.0">1.1.0</h2>
 <h3>Added</h3>
 <ul><li><code>VirtualMasonry</code>: <code>columns</code> to fix the column count, <code>initialItems</code> and <code>initialHasMore</code> to start from a prefetched first page.</li><li><code>DynamicMasonryView</code>: <code>waterfallConfig.columns</code>.</li><li>Server rendering support: layout effects fall back to <code>useEffect</code> on the server.</li></ul>
 <h3>Changed</h3>
@@ -53,10 +53,10 @@
 <h3>Fixed</h3>
 <ul><li>Quick scrolling could start two page requests at once; a synchronous guard now allows a single request.</li><li>A failed request is no longer retried in an endless loop; paging stops until the component is remounted.</li><li>Container width could stay stale after a window was resized in a background tab; <code>resize</code> and <code>visibilitychange</code> now re-measure it.</li><li>Equal-height scroll position used a cached <code>offsetTop</code>; it now reads <code>getBoundingClientRect</code>, so content above the list can change height safely.</li><li>Visible items kept a stable identity while scrolling, so memoized cards no longer re-render on every scroll event.</li></ul>
 <h2 id="1.0.1">1.0.1</h2>
-<p>Current release on <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>: <code>VirtualMasonry</code>, <code>FullWidthEqualHeightMasonry</code> and <code>DynamicMasonryView</code>.</p>
+<p>First public release on <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>: <code>VirtualMasonry</code>, <code>FullWidthEqualHeightMasonry</code> and <code>DynamicMasonryView</code>.</p>
 <nav class="pager" aria-label="Pages"><a rel="prev" href="/react-hybrid-masonry/docs/faq/"><small>Previous</small><span>FAQ &amp; troubleshooting</span></a><span></span></nav>
       </main>
-      <aside class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li><a href="#unreleased">Unreleased</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></aside>
+      <aside class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li><a href="#1.1.0">1.1.0</a></li><li><a href="#1.0.1">1.0.1</a></li></ul></aside>
     </div>
     <footer class="site-footer">
       <div class="inner">
