@@ -58,6 +58,8 @@ export interface DynamicMasonryViewProps<T = any> {
   waterfallConfig?: {
     minColumnWidth?: number;
     maxColumnWidth?: number;
+    /** 直接指定列数，传入后不再按 min/maxColumnWidth 推算 */
+    columns?: number;
     gap?: number;
     buffer?: number;
   };
@@ -265,6 +267,7 @@ export default function DynamicMasonryView<T = any>({
         pageSize={pageSize}
         minColumnWidth={waterfallConfig.minColumnWidth}
         maxColumnWidth={waterfallConfig.maxColumnWidth}
+        columns={waterfallConfig.columns}
         gap={waterfallConfig.gap}
         buffer={waterfallConfig.buffer}
         mapSize={mapSize}

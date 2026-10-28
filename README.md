@@ -190,7 +190,10 @@ function Gallery() {
 | `renderItem` | `(item: any, index: number) => React.ReactNode` | Required | Item render function |
 | `pageSize` | `number` | `50` | Items per page |
 | `minColumnWidth` | `number` | `200` | Minimum column width |
-| `maxColumnWidth` | `number` | - | Maximum column width |
+| `maxColumnWidth` | `number` | - | Maximum column width. Column count never shrinks columns below `minColumnWidth` |
+| `columns` | `number` | - | Fixed column count; skips the min/maxColumnWidth calculation (pass per breakpoint if needed) |
+| `initialItems` | `any[]` | - | First-page data (e.g. prefetched during SSR). Page 1 is not requested again; loading continues from page 2 |
+| `initialHasMore` | `boolean` | `true` | Used with `initialItems`: whether more data exists after the first page |
 | `gap` | `number` | `16` | Gap between items |
 | `buffer` | `number` | `1500` | Buffer size (px) |
 | `loadMoreThreshold` | `number` | `800` | Preload threshold (px) |
@@ -223,7 +226,7 @@ function Gallery() {
 | `enableAnimation` | `boolean` | `true` | Enable animations |
 | `loadData` | `LoadDataFn` | Required | Data loading function (can return isMasonry on first call) |
 | `renderItem` | `(item: any, index: number, isMasonry: boolean) => React.ReactNode` | Required | Render function, isMasonry indicates current layout |
-| `waterfallConfig` | `WaterfallConfig` | `{}` | Waterfall config (minColumnWidth, maxColumnWidth, gap, buffer) |
+| `waterfallConfig` | `WaterfallConfig` | `{}` | Waterfall config (minColumnWidth, maxColumnWidth, columns, gap, buffer) |
 | `equalHeightConfig` | `EqualHeightConfig` | `{}` | Equal-height config (targetRowHeight, sizeRange, maxItemWidth, maxStretchRatio, gap, buffer) |
 | `pageSize` | `number` | `50` | Items per page |
 | `mapSize` | `(raw: any) => {width: number, height: number}` | - | Map dimensions |

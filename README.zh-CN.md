@@ -199,7 +199,10 @@ function DynamicGallery() {
 | `renderItem` | `(item: any, index: number) => React.ReactNode` | **必填** | 渲染每个项目的函数 |
 | `pageSize` | `number` | `50` | 每页加载的数据量 |
 | `minColumnWidth` | `number` | `200` | 最小列宽(px) |
-| `maxColumnWidth` | `number` | - | 最大列宽(px),不设置则不限制 |
+| `maxColumnWidth` | `number` | - | 最大列宽(px),不设置则不限制。列数推算时不会让列宽跌破 `minColumnWidth` |
+| `columns` | `number` | - | 直接指定列数,传入后不再按 min/maxColumnWidth 推算(可按断点自行传入) |
+| `initialItems` | `any[]` | - | 首屏数据(如 SSR 已预取第一页)。传入后不会再请求第 1 页,下一次从第 2 页开始加载 |
+| `initialHasMore` | `boolean` | `true` | 配合 `initialItems`,标记首屏之后是否还有更多数据 |
 | `gap` | `number` | `16` | 项目间距(px) |
 | `buffer` | `number` | `1500` | 可视区域外的缓冲区大小(px),越大渲染的内容越多 |
 | `loadMoreThreshold` | `number` | `800` | 预加载阈值(px),距离底部多远时触发加载 |
