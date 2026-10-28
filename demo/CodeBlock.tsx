@@ -1,80 +1,54 @@
-import React, { useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import React, { useMemo, useState } from "react";
+import Prism from "prismjs";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-bash";
+import { CheckIcon, CopyIcon } from "./Icons";
+import { useI18n } from "./I18nContext";
 
 interface CodeBlockProps {
   code: string;
-  language?: string;
+  language?: "tsx" | "bash";
 }
 
+const LABEL = { tsx: "TSX", bash: "Shell" };
+
+// 语法高亮的配色在 /theme.css（与文档站共用），这里只负责生成 token 标记。
 export default function CodeBlock({ code, language = "tsx" }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useI18n();
+
+  const html = useMemo(
+    () => Prism.highlight(code, Prism.languages[language], language),
+    [code, language],
+  );
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
   };
 
   return (
-    <div
-      style={{
-        position: "relative",
-        background: "#1e1e1e",
-        borderRadius: "8px",
-        overflow: "hidden",
-        marginBottom: "20px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "8px 16px",
-          background: "#2d2d2d",
-          borderBottom: "1px solid #3e3e3e",
-        }}
-      >
-        <span style={{ color: "#858585", fontSize: "12px", fontWeight: "500" }}>
-          {language}
-        </span>
-        <button
-          onClick={handleCopy}
-          style={{
-            padding: "4px 12px",
-            background: copied ? "#4caf50" : "#3e3e3e",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "12px",
-            transition: "all 0.2s",
-          }}
-        >
-          {copied ? "✓ Copied" : "Copy"}
+    <div className="codeblock">
+      <div className="codeblock-head">
+        <span>{LABEL[language]}</span>
+        <button className="copy" type="button" onClick={handleCopy}>
+          {copied ? <CheckIcon /> : <CopyIcon />}
+          <span>{copied ? t.panel.copied : t.panel.copy}</span>
         </button>
       </div>
-      <SyntaxHighlighter
-        language={language}
-        style={vscDarkPlus}
-        customStyle={{
-          margin: 0,
-          padding: "16px",
-          background: "#1e1e1e",
-          fontSize: "13px",
-          maxHeight: "400px",
-          overflow: "auto",
-        }}
-        codeTagProps={{
-          style: {
-            fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
-            lineHeight: "1.6",
-          },
-        }}
-      >
-        {code}
-      </SyntaxHighlighter>
+      <pre>
+        <code
+          className={`language-${language}`}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </pre>
     </div>
   );
 }

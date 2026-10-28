@@ -69,6 +69,16 @@ export default {
     pager: "Pages",
     prev: "Previous",
     next: "Next",
+    docs: "Docs",
+    search: "Search",
+    searchPlaceholder: "Search the docs",
+    noResults: "No results for",
+    onThisPage: "On this page",
+    theme: "Toggle color theme",
+    menu: "Menu",
+    copy: "Copy",
+    copied: "Copied",
+    footerNote: "Released under the MIT License.",
   },
   groups: [
     { title: "Getting started", pages: [""] },
@@ -554,7 +564,7 @@ function Gallery() {
         p("Every item has an aspect ratio `r = width / height`. Using the target row height `H`, the ideal width of an item is `r * H`. `W` is the container width and `g` the gap."),
         h2("rows", "1. Build a row greedily"),
         p("Start a row with the next image. Before adding another image, compute the scale needed to make the current row fill the container:"),
-        code(`scale = (W - (n - 1) * g) / sum(r_i * H)   // n images in the row`),
+        code(`scale = (W - (n - 1) * g) / sum(r_i * H)   // n images in the row`, "text"),
         ul([
           "If `scale <= maxStretchRatio`, the row is full enough: close it.",
           "Otherwise add the next image and test again. Adding an image always brings the scale closer to 1.",
@@ -563,13 +573,13 @@ function Gallery() {
         p("Because one image almost always needs a large enlargement to fill a row, this rule produces rows of at least two images without a special case."),
         h2("height", "2. Compute and clamp the row height"),
         code(`rowHeight = H * scale
-rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange`),
+rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange`, "text"),
         p("`sizeRange` is an independent visual density limit, so it is always applied. When the clamp prevents an exact fill, the next step makes the row end at the edge anyway."),
         h2("widths", "3. Distribute widths without drift"),
         p("Each image gets `r_i * rowHeight` as its ideal width. To make the row end exactly at the container edge, the right edge of image `i` is computed from the cumulative share of the ideal widths, then rounded:"),
         code(`available = W - (n - 1) * g
 rightEdge_i = (sum(ideal_0..i) / sum(ideal_all)) * available + i * g
-width_i     = round(rightEdge_i - x_i)`),
+width_i     = round(rightEdge_i - x_i)`, "text"),
         p("Rounding errors therefore never accumulate and are not pushed onto the last image, whose proportions would otherwise differ visibly from its real picture. Every width is then capped at `maxItemWidth`."),
         h2("last", "4. The last row"),
         ul([

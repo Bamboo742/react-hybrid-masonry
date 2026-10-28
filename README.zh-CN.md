@@ -442,8 +442,7 @@ npm run build
 
 如果你有任何问题或建议:
 
-- 提交 Issue: [GitHub Issues](https://github.com/yourusername/react-hybrid-masonry/issues)
-- 发送邮件: your.email@example.com
+- 提交 Issue: [GitHub Issues](https://github.com/Bamboo742/react-hybrid-masonry/issues)
 
 ## 🙏 致谢
 

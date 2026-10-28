@@ -1,0 +1,518 @@
+/* 演示站样式。变量、顶栏、页脚、代码块在 /theme.css（与文档站共用）。 */
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- 按钮 ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--fg-strong));
+}
+
+.btn-outline {
+  height: 36px;
+  padding: 0 14px;
+  border-color: var(--border-strong);
+  background: var(--bg);
+  color: var(--fg-strong);
+}
+
+.btn-outline:hover {
+  background: var(--bg-subtle);
+}
+
+/* ---------- 分段控件（语言切换、布局切换） ---------- */
+
+.seg {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-subtle);
+}
+
+.seg button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.seg button:hover {
+  color: var(--fg-strong);
+}
+
+.seg button[aria-pressed="true"] {
+  background: var(--bg-elevated);
+  color: var(--fg-strong);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- 首屏 ---------- */
+
+.hero {
+  padding: 80px 24px 56px;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(
+      ellipse 80% 60% at 50% -10%,
+      var(--accent-soft),
+      transparent 70%
+    ),
+    var(--bg);
+}
+
+.hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hero h1 {
+  margin: 22px 0 16px;
+  color: var(--fg-strong);
+  font-size: clamp(34px, 6vw, 58px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.hero-sub {
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.install {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 42px;
+  padding: 0 6px 0 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.install code {
+  color: var(--fg-strong);
+  font: 14px var(--font-mono);
+}
+
+.install .prompt {
+  margin-right: 4px;
+  color: var(--faint);
+  user-select: none;
+}
+
+.install button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  margin-left: 8px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.install button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1200px;
+  margin: 56px auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.features li {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-elevated);
+}
+
+.features h3 {
+  margin: 0 0 6px;
+  color: var(--fg-strong);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.features p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---------- 标签栏 ---------- */
+
+.tabs-bar {
+  position: sticky;
+  top: 60px;
+  z-index: 40;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  overflow-x: auto;
+}
+
+.tabs button {
+  position: relative;
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  color: var(--fg-strong);
+}
+
+.tabs button[aria-selected="true"] {
+  color: var(--accent);
+}
+
+.tabs button[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+/* ---------- 演示面板 ---------- */
+
+.demo-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 36px 24px 72px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.panel-head h2 {
+  margin: 0 0 6px;
+  color: var(--fg-strong);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.panel-head p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0 20px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  margin: 0 0 0 auto;
+}
+
+.stats div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.stats dt {
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stats dd {
+  min-width: 2.5ch;
+  margin: 0;
+  color: var(--fg-strong);
+  font: 600 15px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.gallery {
+  min-height: 480px;
+}
+
+/* ---------- 画廊卡片 ---------- */
+
+.card {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  box-shadow: 0 0 0 1px var(--border), var(--shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-equal {
+  border-radius: 6px;
+}
+
+.card:hover {
+  z-index: 1;
+  box-shadow: 0 0 0 1px var(--border-strong), var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card.is-loading {
+  background: linear-gradient(
+      100deg,
+      var(--bg-subtle) 30%,
+      var(--border) 50%,
+      var(--bg-subtle) 70%
+    )
+    0 0 / 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.card.is-loaded img {
+  opacity: 1;
+}
+
+.card-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--faint);
+}
+
+.card-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 36px 14px 12px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.66),
+    rgba(0, 0, 0, 0)
+  );
+  color: rgba(255, 255, 255, 1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover .card-caption,
+.card:focus-within .card-caption {
+  opacity: 1;
+}
+
+.card-title {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-author {
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (hover: none) {
+  .card-caption {
+    opacity: 1;
+  }
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 960px) {
+  .features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 48px 20px 40px;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    margin-top: 40px;
+  }
+
+  .tabs {
+    padding: 0 12px;
+  }
+
+  .demo-main {
+    padding: 28px 16px 56px;
+  }
+
+  .panel-head {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .panel-bar {
+    flex-wrap: wrap;
+  }
+
+  .seg button {
+    padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card img,
+  .card-caption {
+    transition: none;
+  }
+
+  .card.is-loading {
+    animation: none;
+  }
+}
+
+.tabs {
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}

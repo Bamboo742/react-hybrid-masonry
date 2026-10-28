@@ -347,6 +347,3 @@ Inspired by:
 - Google Photos' justified layout
 - React Virtualized
 
----
-
-Made with ❤️ by [Your Name]

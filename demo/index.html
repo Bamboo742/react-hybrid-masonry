@@ -1,46 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React Hybrid Masonry – 虚拟滚动瀑布流与等高布局 在线演示</title>
+    <title>React Hybrid Masonry – Virtual Scrolling Masonry &amp; Equal-Height Layout | 虚拟滚动瀑布流</title>
     <meta
       name="description"
-      content="react-hybrid-masonry 在线演示：零依赖的 React 虚拟滚动瀑布流（Masonry）、等高布局和动态布局切换，支持无限滚动。附完整使用文档与 API。"
+      content="Live demo of react-hybrid-masonry: a zero-dependency React library for virtual-scrolling waterfall (masonry) and equal-height layouts with infinite scroll. 零依赖的 React 虚拟滚动瀑布流与等高布局，附完整文档。"
     />
     <link rel="canonical" href="https://bamboo742.github.io/react-hybrid-masonry/" />
     <link rel="alternate" hreflang="zh-CN" href="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/" />
     <link rel="alternate" hreflang="en" href="https://bamboo742.github.io/react-hybrid-masonry/docs/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="React Hybrid Masonry – 虚拟滚动瀑布流与等高布局" />
-    <meta property="og:description" content="零依赖的 React 虚拟滚动瀑布流、等高布局与动态布局组件库。" />
+    <meta property="og:title" content="React Hybrid Masonry – Virtual Scrolling Masonry &amp; Equal-Height Layout" />
+    <meta property="og:description" content="Zero-dependency React components for virtual-scrolling waterfall, equal-height and dynamic layouts." />
     <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-      }
-
-      #root {
-        width: 100%;
-        min-height: 100vh;
-      }
-    </style>
+    <meta name="twitter:card" content="summary" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/react-hybrid-masonry/favicon.svg" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("rhm-theme");
+          if (t !== "light" && t !== "dark") {
+            t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="/react-hybrid-masonry/theme.css" />
   </head>
   <body>
     <div id="root"></div>
     <noscript>
       <h1>React Hybrid Masonry</h1>
-      <p>零依赖的 React 虚拟滚动瀑布流与等高布局组件库。</p>
+      <p>Zero-dependency React library for virtual-scrolling waterfall and equal-height layouts. 零依赖的 React 虚拟滚动瀑布流与等高布局组件库。</p>
       <ul>
-        <li><a href="./docs/zh/">中文文档</a></li>
         <li><a href="./docs/">English documentation</a></li>
+        <li><a href="./docs/zh/">中文文档</a></li>
         <li><a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a></li>
       </ul>
     </noscript>

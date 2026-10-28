@@ -16,60 +16,75 @@
     <meta property="og:description" content="DynamicMasonryView API 参考：运行时在瀑布流与等高布局之间选择，可由第一次接口返回或受控属性决定，带首页缓存和错误处理。" />
     <meta property="og:url" content="https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/" />
     <meta name="twitter:card" content="summary" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/react-hybrid-masonry/favicon.svg" />
+    <script>(function(){try{var t=localStorage.getItem("rhm-theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})();</script>
+    <link rel="stylesheet" href="/react-hybrid-masonry/theme.css" />
     <link rel="stylesheet" href="/react-hybrid-masonry/docs/docs.css" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"DynamicMasonryView","description":"DynamicMasonryView API 参考：运行时在瀑布流与等高布局之间选择，可由第一次接口返回或受控属性决定，带首页缓存和错误处理。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/","dateModified":"2026-10-28","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"DynamicMasonryView","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/"}]}]}</script>
+    <script defer src="/react-hybrid-masonry/docs/docs.js"></script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"DynamicMasonryView","description":"DynamicMasonryView API 参考：运行时在瀑布流与等高布局之间选择，可由第一次接口返回或受控属性决定，带首页缓存和错误处理。","inLanguage":"zh-CN","url":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/","dateModified":"2026-10-29","isPartOf":{"@id":"https://github.com/Bamboo742/react-hybrid-masonry"}},{"@type":"SoftwareSourceCode","@id":"https://github.com/Bamboo742/react-hybrid-masonry","name":"react-hybrid-masonry","programmingLanguage":"TypeScript","runtimePlatform":"React >= 16.8","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Bamboo742/react-hybrid-masonry"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"React Hybrid Masonry","item":"https://bamboo742.github.io/react-hybrid-masonry/"},{"@type":"ListItem","position":2,"name":"文档","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/"},{"@type":"ListItem","position":3,"name":"DynamicMasonryView","item":"https://bamboo742.github.io/react-hybrid-masonry/docs/zh/dynamic-view/"}]}]}</script>
   </head>
-  <body>
+  <body data-search="/react-hybrid-masonry/docs/zh/search.json" data-copy="复制" data-copied="已复制" data-no-results="没有找到与以下内容相关的结果：" data-search-placeholder="搜索文档">
     <header class="site-header">
       <div class="bar">
-        <a class="brand" href="/react-hybrid-masonry/">React Hybrid Masonry</a>
-        <nav aria-label="站点">
+        <button class="icon-btn menu-btn" type="button" aria-label="菜单" aria-expanded="false" aria-controls="docs-nav"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <a class="brand" href="/react-hybrid-masonry/"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><g fill="var(--accent-fg)"><rect x="6" y="6" width="5" height="11" rx="1.5"/><rect x="6" y="19" width="5" height="7" rx="1.5"/><rect x="13.5" y="6" width="5" height="6" rx="1.5"/><rect x="13.5" y="14" width="5" height="12" rx="1.5"/><rect x="21" y="6" width="5" height="8" rx="1.5"/><rect x="21" y="16" width="5" height="10" rx="1.5"/></g></svg><span>React Hybrid Masonry</span></a>
+        <button class="search-btn" type="button" data-search-open aria-label="搜索"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="label">搜索文档</span><kbd>Ctrl K</kbd></button>
+        <nav class="top-links" aria-label="站点">
           <a href="/react-hybrid-masonry/">在线演示</a>
-          <a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a>
+          <a href="/react-hybrid-masonry/docs/zh/" class="active">文档</a>
           <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a>
-          <a href="/react-hybrid-masonry/docs/dynamic-view/" hreflang="en" lang="en">English</a>
+          <a href="/react-hybrid-masonry/docs/dynamic-view/" hreflang="en" lang="en" class="lang-switch">English</a>
         </nav>
+        <a class="icon-btn" href="https://github.com/Bamboo742/react-hybrid-masonry" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+        <button class="icon-btn theme-btn" type="button" aria-label="切换深浅色"><span class="sun"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="moon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></span></button>
       </div>
     </header>
     <div class="layout">
-      <nav class="toc" aria-label="文档目录"><ul><li class="group">开始使用</li><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li><li class="group">组件</li><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/" class="current" aria-current="page">DynamicMasonryView</a><ul class="sub"><li><a href="#modes">三种确定布局的方式</a></li><li><a href="#props">属性</a></li><li><a href="#exports">导出的类型</a></li></ul></li><li class="group">指南</li><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li><li class="group">参考</li><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></nav>
+      <nav class="sidebar" id="docs-nav" aria-label="文档目录"><div class="nav-group"><p class="nav-title">开始使用</p><ul><li><a href="/react-hybrid-masonry/docs/zh/">简介</a></li></ul></div><div class="nav-group"><p class="nav-title">组件</p><ul><li><a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a></li><li><a href="/react-hybrid-masonry/docs/zh/dynamic-view/" class="current" aria-current="page">DynamicMasonryView</a></li></ul></div><div class="nav-group"><p class="nav-title">指南</p><ul><li><a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/nextjs-ssr/">Next.js 与 SSR</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/responsive/">响应式布局</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/performance/">性能调优</a></li><li><a href="/react-hybrid-masonry/docs/zh/guides/equal-height-algorithm/">等高布局算法详解</a></li></ul></div><div class="nav-group"><p class="nav-title">参考</p><ul><li><a href="/react-hybrid-masonry/docs/zh/faq/">常见问题</a></li><li><a href="/react-hybrid-masonry/docs/zh/changelog/">更新记录</a></li></ul></div></nav>
       <main>
         <h1>DynamicMasonryView</h1>
         <p class="lead">一个组件，两种布局。布局由属性、第一次接口返回或默认值决定。</p>
 <h2 id="modes">三种确定布局的方式</h2>
 <h3>1. 受控</h3>
-<pre><code>&lt;DynamicMasonryView
-  isMasonry={useWaterfall} // true = 瀑布流，false = 等高布局
-  loadData={loadData}
-  renderItem={(item, index, isMasonry) =&gt; /* ... */ null}
-/&gt;</code></pre>
+<div class="codeblock"><div class="codeblock-head"><span>TSX</span></div><pre><code class="language-tsx"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">DynamicMasonryView</span></span>
+  <span class="token attr-name">isMasonry</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>useWaterfall<span class="token punctuation">}</span></span> <span class="token comment">// true = 瀑布流，false = 等高布局</span>
+  <span class="token attr-name">loadData</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>loadData<span class="token punctuation">}</span></span>
+  <span class="token attr-name">renderItem</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span>item<span class="token punctuation">,</span> index<span class="token punctuation">,</span> isMasonry<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token comment">/* ... */</span> <span class="token keyword">null</span><span class="token punctuation">}</span></span>
+<span class="token punctuation">/></span></span></code></pre></div>
 <p>该属性优先级最高。它变化时，当前布局会被重新挂载，并从第 1 页重新加载。</p>
 <h3>2. 由第一次接口返回决定</h3>
-<pre><code>&lt;DynamicMasonryView
-  loadData={async (page, pageSize) =&gt; {
-    const res = await fetch("/api/content?page=" + page + "&amp;size=" + pageSize);
-    const json = await res.json();
-    return page === 1
-      ? { data: json.items, hasMore: json.hasMore, isMasonry: json.layoutType === "waterfall" }
-      : { data: json.items, hasMore: json.hasMore };
-  }}
-  renderItem={(item, index, isMasonry) =&gt; /* ... */ null}
-/&gt;</code></pre>
+<div class="codeblock"><div class="codeblock-head"><span>TSX</span></div><pre><code class="language-tsx"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">DynamicMasonryView</span></span>
+  <span class="token attr-name">loadData</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token keyword">async</span> <span class="token punctuation">(</span>page<span class="token punctuation">,</span> pageSize<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> res <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">"/api/content?page="</span> <span class="token operator">+</span> page <span class="token operator">+</span> <span class="token string">"&amp;size="</span> <span class="token operator">+</span> pageSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> json <span class="token operator">=</span> <span class="token keyword">await</span> res<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> page <span class="token operator">===</span> <span class="token number">1</span>
+      <span class="token operator">?</span> <span class="token punctuation">{</span> data<span class="token operator">:</span> json<span class="token punctuation">.</span>items<span class="token punctuation">,</span> hasMore<span class="token operator">:</span> json<span class="token punctuation">.</span>hasMore<span class="token punctuation">,</span> isMasonry<span class="token operator">:</span> json<span class="token punctuation">.</span>layoutType <span class="token operator">===</span> <span class="token string">"waterfall"</span> <span class="token punctuation">}</span>
+      <span class="token operator">:</span> <span class="token punctuation">{</span> data<span class="token operator">:</span> json<span class="token punctuation">.</span>items<span class="token punctuation">,</span> hasMore<span class="token operator">:</span> json<span class="token punctuation">.</span>hasMore <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">}</span></span>
+  <span class="token attr-name">renderItem</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span>item<span class="token punctuation">,</span> index<span class="token punctuation">,</span> isMasonry<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token comment">/* ... */</span> <span class="token keyword">null</span><span class="token punctuation">}</span></span>
+<span class="token punctuation">/></span></span></code></pre></div>
 <p>组件挂载时调用一次 <code>loadData(1, pageSize)</code>，从结果里读取 <code>isMasonry</code>，并缓存这第一页数据，所以选好的布局会立刻展示它，第 1 页不会被请求第二次。布局类型<strong>只读取一次</strong>，后续页不需要再返回。</p>
 <h3>3. 默认值</h3>
 <p>如果 <code>loadData</code> 没有返回 <code>isMasonry</code>，则使用 <code>defaultIsMasonry</code>（默认 <code>true</code>）。如果第一次请求失败，会调用 <code>onError</code> 并使用默认布局。</p>
 <h2 id="props">属性</h2>
 <div class="table-wrap"><table><thead><tr><th>属性</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>isMasonry</code></td><td><code>boolean</code></td><td>–</td><td>受控模式。<code>true</code> 为瀑布流，<code>false</code> 为等高布局。</td></tr><tr><td><code>defaultIsMasonry</code></td><td><code>boolean</code></td><td><code>true</code></td><td><code>loadData</code> 没有返回 <code>isMasonry</code> 时使用。</td></tr><tr><td><code>loadData</code></td><td><code>LoadDataFn</code></td><td>–</td><td><code>(page, pageSize) =&gt; Promise&lt;{ data, hasMore, isMasonry? }&gt;</code>。</td></tr><tr><td><code>renderItem</code></td><td><code>(item, index, isMasonry) =&gt; ReactNode</code></td><td>必填</td><td>渲染函数，最后一个参数表示当前使用的布局。</td></tr><tr><td><code>waterfallConfig</code></td><td><code>{ minColumnWidth, maxColumnWidth, columns, gap, buffer }</code></td><td><code>{}</code></td><td>传给 <a href="/react-hybrid-masonry/docs/zh/virtual-masonry/">VirtualMasonry</a>。</td></tr><tr><td><code>equalHeightConfig</code></td><td><code>{ targetRowHeight, sizeRange, maxItemWidth, maxStretchRatio, gap, buffer }</code></td><td><code>{}</code></td><td>传给 <a href="/react-hybrid-masonry/docs/zh/equal-height/">FullWidthEqualHeightMasonry</a>。</td></tr><tr><td><code>pageSize</code></td><td><code>number</code></td><td><code>50</code></td><td>每页请求的数据量。</td></tr><tr><td><code>mapSize</code></td><td><code>(raw) =&gt; { width, height }</code></td><td>–</td><td>把你的数据映射成宽高。</td></tr><tr><td><code>renderInitialLoader</code></td><td><code>() =&gt; ReactNode</code></td><td>空白块</td><td>确定布局类型之前显示的内容。</td></tr><tr><td><code>onLayoutTypeLoaded</code></td><td><code>(isMasonry: boolean) =&gt; void</code></td><td>–</td><td>布局类型确定后调用。</td></tr><tr><td><code>onError</code></td><td><code>(error: Error) =&gt; void</code></td><td>–</td><td>第一次请求失败时调用。</td></tr><tr><td><code>enableAnimation</code></td><td><code>boolean</code></td><td><code>true</code></td><td>预留参数，目前没有效果。</td></tr></tbody></table></div>
 <h2 id="exports">导出的类型</h2>
-<pre><code>import {
-  DynamicMasonryView,
-  ViewType, // 枚举：ViewType.Waterfall = 1，ViewType.EqualHeight = 2
-} from "react-hybrid-masonry";
-import type { DynamicMasonryViewProps, LoadDataFn } from "react-hybrid-masonry";</code></pre>
+<div class="codeblock"><div class="codeblock-head"><span>TSX</span></div><pre><code class="language-tsx"><span class="token keyword">import</span> <span class="token punctuation">{</span>
+  DynamicMasonryView<span class="token punctuation">,</span>
+  ViewType<span class="token punctuation">,</span> <span class="token comment">// 枚举：ViewType.Waterfall = 1，ViewType.EqualHeight = 2</span>
+<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react-hybrid-masonry"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token keyword">type</span> <span class="token punctuation">{</span> DynamicMasonryViewProps<span class="token punctuation">,</span> LoadDataFn <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react-hybrid-masonry"</span><span class="token punctuation">;</span></code></pre></div>
 <div class="note"><code>loadData</code> 的类型是 <code>LoadDataFn&lt;T&gt;</code>，只有第一次调用可以带上 <code>isMasonry</code>。相关：<a href="/react-hybrid-masonry/docs/zh/guides/pagination/">分页与无限滚动</a>。</div>
-<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/equal-height/"><small>上一页</small>FullWidthEqualHeightMasonry</a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/pagination/"><small>下一页</small>分页与无限滚动</a></nav>
+<nav class="pager" aria-label="翻页"><a rel="prev" href="/react-hybrid-masonry/docs/zh/equal-height/"><small>上一页</small><span>FullWidthEqualHeightMasonry</span></a><a rel="next" href="/react-hybrid-masonry/docs/zh/guides/pagination/"><small>下一页</small><span>分页与无限滚动</span></a></nav>
       </main>
+      <aside class="toc" aria-label="本页目录"><p class="toc-title">本页目录</p><ul><li><a href="#modes">三种确定布局的方式</a></li><li><a href="#props">属性</a></li><li><a href="#exports">导出的类型</a></li></ul></aside>
     </div>
-    <footer>MIT License · <a href="https://github.com/Bamboo742/react-hybrid-masonry">react-hybrid-masonry</a> · <a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a></footer>
+    <footer class="site-footer">
+      <div class="inner">
+        <p>基于 MIT 协议开源。 © 2026 react-hybrid-masonry</p>
+        <nav aria-label="站点"><a href="https://github.com/Bamboo742/react-hybrid-masonry">GitHub</a><a href="https://www.npmjs.com/package/react-hybrid-masonry">npm</a><a href="https://github.com/Bamboo742/react-hybrid-masonry/issues">Issues</a></nav>
+      </div>
+    </footer>
   </body>
 </html>

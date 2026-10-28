@@ -69,6 +69,16 @@ export default {
     pager: "翻页",
     prev: "上一页",
     next: "下一页",
+    docs: "文档",
+    search: "搜索",
+    searchPlaceholder: "搜索文档",
+    noResults: "没有找到与以下内容相关的结果：",
+    onThisPage: "本页目录",
+    theme: "切换深浅色",
+    menu: "菜单",
+    copy: "复制",
+    copied: "已复制",
+    footerNote: "基于 MIT 协议开源。",
   },
   groups: [
     { title: "开始使用", pages: [""] },
@@ -554,7 +564,7 @@ function Gallery() {
         p("每个元素有宽高比 `r = 宽 / 高`。以目标行高 `H` 计算，元素的理想宽度是 `r * H`。`W` 是容器宽度，`g` 是间距。"),
         h2("rows", "1. 贪心拼出一行"),
         p("用下一张图片开始一行。每次加入新图片之前，先计算让当前行铺满容器所需要的缩放比例："),
-        code(`scale = (W - (n - 1) * g) / sum(r_i * H)   // 这一行有 n 张图`),
+        code(`scale = (W - (n - 1) * g) / sum(r_i * H)   // 这一行有 n 张图`, "text"),
         ul([
           "如果 `scale <= maxStretchRatio`，说明这一行已经够满，结束这一行。",
           "否则加入下一张图片再判断。加入图片总会让缩放比例更接近 1。",
@@ -563,13 +573,13 @@ function Gallery() {
         p("因为一张图几乎总是需要很大的放大才能填满一行，这条规则不需要特殊处理，就能保证每行至少有两张图。"),
         h2("height", "2. 计算并限制行高"),
         code(`rowHeight = H * scale
-rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange`),
+rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange`, "text"),
         p("`sizeRange` 是一条独立的视觉密度限制，所以总是生效。限制导致无法精确铺满时，下一步仍会让整行结束在边缘。"),
         h2("widths", "3. 不累积误差地分配宽度"),
         p("每张图的理想宽度是 `r_i * rowHeight`。为了让这一行刚好结束在容器边缘，第 `i` 张图的右边缘根据理想宽度的累计占比计算，再取整："),
         code(`available = W - (n - 1) * g
 rightEdge_i = (sum(ideal_0..i) / sum(ideal_all)) * available + i * g
-width_i     = round(rightEdge_i - x_i)`),
+width_i     = round(rightEdge_i - x_i)`, "text"),
         p("这样舍入误差不会累积，也不会全部压给最后一张图（那样它的比例会明显偏离真实图片）。最后每个宽度都会限制在 `maxItemWidth` 以内。"),
         h2("last", "4. 最后一行"),
         ul([
