@@ -49,7 +49,7 @@
 <h3>新增</h3>
 <ul><li><code>VirtualMasonry</code>：新增 <code>columns</code> 固定列数，以及 <code>initialItems</code>、<code>initialHasMore</code>，可从预取好的第一页开始。</li><li><code>DynamicMasonryView</code>：新增 <code>waterfallConfig.columns</code>。</li><li>支持服务端渲染：布局副作用在服务端降级为 <code>useEffect</code>。</li></ul>
 <h3>变更</h3>
-<ul><li>等高布局：新的拼行规则由 <code>maxStretchRatio</code> 驱动；宽度按累计比例分配，舍入误差不再落到最后一张图上；最后一行溢出时统一等比缩小。</li><li>瀑布流：推算出的列数不会让列宽小于 <code>minColumnWidth</code>。</li></ul>
+<ul><li>等高布局：新的拼行规则由 <code>maxStretchRatio</code> 驱动；宽度按累计比例分配，舍入误差不再落到最后一张图上；最后一行溢出时统一等比缩小。</li><li>瀑布流：设置了 <code>maxColumnWidth</code> 时，只在新的列宽仍不小于 <code>minColumnWidth</code> 的前提下才会增加列。</li></ul>
 <h3>修复</h3>
 <ul><li>快速滚动时可能同时发出两个翻页请求，现在用同步判断保证只有一个请求在途。</li><li>请求失败不再无限重试，翻页会停止，直到重新挂载组件。</li><li>窗口在后台标签页被缩放后，容器宽度可能一直是旧值；现在 <code>resize</code> 与 <code>visibilitychange</code> 会重新测量。</li><li>等高布局的滚动位置不再使用缓存的 <code>offsetTop</code>，改为读取 <code>getBoundingClientRect</code>，列表上方内容高度变化也不会出错。</li><li>滚动时可见元素保持引用稳定，做了 memo 的卡片不再在每次滚动事件里重新渲染。</li></ul>
 <h2 id="1.0.1">1.0.1</h2>

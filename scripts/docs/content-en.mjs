@@ -1,4 +1,6 @@
 import equalHeightPage from "./pages/equal-height-en.mjs";
+import virtualMasonryPage from "./pages/virtual-masonry-en.mjs";
+import dynamicViewPage from "./pages/dynamic-view-en.mjs";
 import { code, h2, h3, join, note, ol, p, table, ul } from "./helpers.mjs";
 
 const card = String.raw`<div
@@ -173,134 +175,11 @@ export function Gallery() {
       ),
     },
 
-    "virtual-masonry": {
-      nav: "VirtualMasonry",
-      title: "VirtualMasonry – React Virtual Scrolling Waterfall (Masonry) Layout",
-      description:
-        "VirtualMasonry API reference: a React waterfall (Pinterest style) layout with virtual scrolling, infinite loading, fixed or width-based column count and SSR-friendly initial items.",
-      h1: "VirtualMasonry",
-      lead: "Pinterest style waterfall layout: equal-width columns, items keep their aspect ratio and are placed into the shortest column. Only items near the viewport are rendered.",
-      body: join(
-        h2("usage", "Usage"),
-        code(`import { VirtualMasonry } from "react-hybrid-masonry";
-
-<VirtualMasonry
-  loadData={loadData}
-  pageSize={30}
-  minColumnWidth={200}
-  maxColumnWidth={350}
-  gap={16}
-  renderItem={(item) => (
-    ${card.replace(/\n/g, "\n    ")}
-  )}
-/>`),
-        h2("props", "Props"),
-        table(
-          ["Prop", "Type", "Default", "Description"],
-          [
-            ["`loadData`", "`(page, pageSize) => Promise<{ data: any[]; hasMore: boolean }>`", "–", "Loads one page. Page numbers start at 1. Without it the component stays empty."],
-            ["`renderItem`", "`(item, index) => ReactNode`", "required", "Renders one item. `index` is the position among the **currently rendered** items."],
-            ["`pageSize`", "`number`", "`50`", "Items requested per page."],
-            ["`minColumnWidth`", "`number`", "`200`", "Minimum column width in px. The calculated column count never makes columns narrower than this."],
-            ["`maxColumnWidth`", "`number`", "–", "Maximum column width in px."],
-            ["`columns`", "`number`", "–", "Fixed column count. Skips the width based calculation."],
-            ["`gap`", "`number`", "`16`", "Gap between items, horizontally and vertically, in px."],
-            ["`buffer`", "`number`", "`1500`", "Extra distance in px above and below the viewport that is still rendered."],
-            ["`loadMoreThreshold`", "`number`", "`800`", "Distance in px from the bottom at which the next page is requested."],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "Maps your data to dimensions. See [the data contract](@/#data-contract)."],
-            ["`initialItems`", "`any[]`", "–", "A first page you already have (for example from SSR). Page 1 is not requested again; loading continues at page 2."],
-            ["`initialHasMore`", "`boolean`", "`true`", "Used with `initialItems`: whether more data exists after the first page."],
-            ["`enableAnimation`", "`boolean`", "`true`", "Reserved. It has no effect yet."],
-          ],
-        ),
-        h2("columns", "How the column count is chosen"),
-        ol([
-          "If `columns` is set, it is used as is.",
-          "Otherwise `floor(containerWidth / minColumnWidth)` columns are used, at least 1.",
-          "If `maxColumnWidth` is set and the columns would be wider than that, columns are added one by one (up to 20) until they fit, but a column is **not** added when it would make columns narrower than `minColumnWidth`. When both limits cannot be met, the minimum wins.",
-        ]),
-        p("The column width is `(containerWidth - gap * (columns - 1)) / columns`, capped at `maxColumnWidth`. When the cap applies, the grid is **left aligned** and the remaining space stays empty on the right."),
-        p("An item's height is `columnWidth * (height / width)` of its original size, and it is placed into the column that is currently the shortest."),
-        h2("examples", "Examples"),
-        h3("Fixed number of columns"),
-        code(`<VirtualMasonry columns={4} gap={12} loadData={loadData} renderItem={renderCard} />`),
-        p("Pick the number per breakpoint with a small hook, see [responsive layouts](@/guides/responsive/)."),
-        h3("Start from data you already have"),
-        code(`<VirtualMasonry
-  initialItems={firstPage.items}
-  initialHasMore={firstPage.hasMore}
-  loadData={loadData} // first call will be page 2
-  renderItem={renderCard}
-/>`),
-        h3("Item sizes in other fields"),
-        code(`<VirtualMasonry
-  mapSize={(raw) => ({ width: raw.imgW, height: raw.imgH })}
-  loadData={loadData}
-  renderItem={renderCard}
-/>`),
-        note("Related: [pagination and infinite scroll](@/guides/pagination/), [performance tuning](@/guides/performance/)."),
-      ),
-    },
+    "virtual-masonry": virtualMasonryPage(),
 
     "equal-height": equalHeightPage(),
 
-    "dynamic-view": {
-      nav: "DynamicMasonryView",
-      title: "DynamicMasonryView – Switch Between Waterfall and Equal-Height Layout in React",
-      description:
-        "DynamicMasonryView API reference: choose between waterfall and equal-height layouts at runtime, from the first API response or a controlled prop, with first-page caching and error handling.",
-      h1: "DynamicMasonryView",
-      lead: "One component, two layouts. The layout is controlled by a prop, by the first API response, or by a default.",
-      body: join(
-        h2("modes", "Three ways to pick the layout"),
-        h3("1. Controlled"),
-        code(`<DynamicMasonryView
-  isMasonry={useWaterfall} // true = waterfall, false = equal-height
-  loadData={loadData}
-  renderItem={(item, index, isMasonry) => /* ... */ null}
-/>`),
-        p("The prop has priority over everything else. When it changes the active layout is remounted and loads from page 1 again."),
-        h3("2. From the first API response"),
-        code(`<DynamicMasonryView
-  loadData={async (page, pageSize) => {
-    const res = await fetch("/api/content?page=" + page + "&size=" + pageSize);
-    const json = await res.json();
-    return page === 1
-      ? { data: json.items, hasMore: json.hasMore, isMasonry: json.layoutType === "waterfall" }
-      : { data: json.items, hasMore: json.hasMore };
-  }}
-  renderItem={(item, index, isMasonry) => /* ... */ null}
-/>`),
-        p("The component calls `loadData(1, pageSize)` once on mount, reads `isMasonry` from the result and caches that first page, so the chosen layout shows it right away and page 1 is not requested a second time. The layout type is read **only once**; later pages do not need to return it."),
-        h3("3. Default value"),
-        p("If `loadData` does not return `isMasonry`, `defaultIsMasonry` (default `true`) is used. If the first request fails, `onError` is called and the default layout is used."),
-        h2("props", "Props"),
-        table(
-          ["Prop", "Type", "Default", "Description"],
-          [
-            ["`isMasonry`", "`boolean`", "–", "Controlled mode. `true` = waterfall, `false` = equal-height."],
-            ["`defaultIsMasonry`", "`boolean`", "`true`", "Used when `loadData` does not return `isMasonry`."],
-            ["`loadData`", "`LoadDataFn`", "–", "`(page, pageSize) => Promise<{ data, hasMore, isMasonry? }>`."],
-            ["`renderItem`", "`(item, index, isMasonry) => ReactNode`", "required", "Render function. The last argument tells which layout is active."],
-            ["`waterfallConfig`", "`{ minColumnWidth, maxColumnWidth, columns, gap, buffer }`", "`{}`", "Forwarded to [VirtualMasonry](@/virtual-masonry/)."],
-            ["`equalHeightConfig`", "`{ targetRowHeight, sizeRange, maxItemWidth, maxStretchRatio, gap, buffer }`", "`{}`", "Forwarded to [FullWidthEqualHeightMasonry](@/equal-height/)."],
-            ["`pageSize`", "`number`", "`50`", "Items requested per page."],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "Maps your data to dimensions."],
-            ["`renderInitialLoader`", "`() => ReactNode`", "empty block", "Shown while the layout type is being determined."],
-            ["`onLayoutTypeLoaded`", "`(isMasonry: boolean) => void`", "–", "Called once the layout type is known."],
-            ["`onError`", "`(error: Error) => void`", "–", "Called when the first request fails."],
-            ["`enableAnimation`", "`boolean`", "`true`", "Reserved. It has no effect yet."],
-          ],
-        ),
-        h2("exports", "Exported types"),
-        code(`import {
-  DynamicMasonryView,
-  ViewType, // enum: ViewType.Waterfall = 1, ViewType.EqualHeight = 2
-} from "react-hybrid-masonry";
-import type { DynamicMasonryViewProps, LoadDataFn } from "react-hybrid-masonry";`),
-        note("`loadData` is declared as `LoadDataFn<T>`; only the first call may include `isMasonry`. Related: [pagination and infinite scroll](@/guides/pagination/)."),
-      ),
-    },
+    "dynamic-view": dynamicViewPage(),
 
     "guides/pagination": {
       nav: "Pagination & infinite scroll",
@@ -568,7 +447,7 @@ width_i     = round(rightEdge_i - x_i)`, "text"),
         h3("Changed"),
         ul([
           "Equal-height layout: new row building rule driven by `maxStretchRatio`, widths distributed from cumulative ratios so rounding errors no longer end up on the last image, and the last row is scaled down uniformly when it overflows.",
-          "Waterfall layout: the calculated column count never makes columns narrower than `minColumnWidth`.",
+          "Waterfall layout: when `maxColumnWidth` is set, columns are only added while the new column width stays at or above `minColumnWidth`.",
         ]),
         h3("Fixed"),
         ul([

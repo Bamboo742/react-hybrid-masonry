@@ -190,7 +190,7 @@ function Gallery() {
 | `renderItem` | `(item: any, index: number) => React.ReactNode` | Required | Item render function |
 | `pageSize` | `number` | `50` | Items per page |
 | `minColumnWidth` | `number` | `200` | Minimum column width |
-| `maxColumnWidth` | `number` | - | Maximum column width. Column count never shrinks columns below `minColumnWidth` |
+| `maxColumnWidth` | `number` | - | Maximum column width. Columns are only added to satisfy it while they stay at or above `minColumnWidth` |
 | `columns` | `number` | - | Fixed column count; skips the min/maxColumnWidth calculation (pass per breakpoint if needed) |
 | `initialItems` | `any[]` | - | First-page data (e.g. prefetched during SSR). Page 1 is not requested again; loading continues from page 2 |
 | `initialHasMore` | `boolean` | `true` | Used with `initialItems`: whether more data exists after the first page |

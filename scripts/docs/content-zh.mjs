@@ -1,4 +1,6 @@
 import equalHeightPage from "./pages/equal-height-zh.mjs";
+import virtualMasonryPage from "./pages/virtual-masonry-zh.mjs";
+import dynamicViewPage from "./pages/dynamic-view-zh.mjs";
 import { code, h2, h3, join, note, ol, p, table, ul } from "./helpers.mjs";
 
 const card = String.raw`<div
@@ -173,134 +175,11 @@ export function Gallery() {
       ),
     },
 
-    "virtual-masonry": {
-      nav: "VirtualMasonry",
-      title: "VirtualMasonry – React 虚拟滚动瀑布流（Masonry）布局",
-      description:
-        "VirtualMasonry API 参考：React 瀑布流（Pinterest 风格）布局，支持虚拟滚动、无限加载、固定或按宽度推算列数，以及适合 SSR 的初始数据。",
-      h1: "VirtualMasonry",
-      lead: "Pinterest 风格的瀑布流布局：列宽相同，元素保持宽高比，放进当前最短的一列。只渲染视口附近的元素。",
-      body: join(
-        h2("usage", "用法"),
-        code(`import { VirtualMasonry } from "react-hybrid-masonry";
-
-<VirtualMasonry
-  loadData={loadData}
-  pageSize={30}
-  minColumnWidth={200}
-  maxColumnWidth={350}
-  gap={16}
-  renderItem={(item) => (
-    ${card.replace(/\n/g, "\n    ")}
-  )}
-/>`),
-        h2("props", "属性"),
-        table(
-          ["属性", "类型", "默认值", "说明"],
-          [
-            ["`loadData`", "`(page, pageSize) => Promise<{ data: any[]; hasMore: boolean }>`", "–", "加载一页数据，页码从 1 开始。不传则组件保持为空。"],
-            ["`renderItem`", "`(item, index) => ReactNode`", "必填", "渲染单个元素。`index` 是它在**当前已渲染**元素中的序号。"],
-            ["`pageSize`", "`number`", "`50`", "每页请求的数据量。"],
-            ["`minColumnWidth`", "`number`", "`200`", "最小列宽（px）。推算出的列数不会让列宽比它更窄。"],
-            ["`maxColumnWidth`", "`number`", "–", "最大列宽（px）。"],
-            ["`columns`", "`number`", "–", "直接指定列数，不再按宽度推算。"],
-            ["`gap`", "`number`", "`16`", "元素之间的水平和垂直间距（px）。"],
-            ["`buffer`", "`number`", "`1500`", "视口上下仍会渲染的缓冲距离（px）。"],
-            ["`loadMoreThreshold`", "`number`", "`800`", "距离底部多远（px）时开始请求下一页。"],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "把你的数据映射成宽高，见[数据约定](@/#data-contract)。"],
-            ["`initialItems`", "`any[]`", "–", "已经拿到的第一页数据（如 SSR 预取）。传入后不会再请求第 1 页，下一次从第 2 页开始。"],
-            ["`initialHasMore`", "`boolean`", "`true`", "配合 `initialItems`，表示首屏之后是否还有更多数据。"],
-            ["`enableAnimation`", "`boolean`", "`true`", "预留参数，目前没有效果。"],
-          ],
-        ),
-        h2("columns", "列数如何确定"),
-        ol([
-          "设置了 `columns` 就直接使用它。",
-          "否则使用 `floor(容器宽度 / minColumnWidth)` 列，至少 1 列。",
-          "如果设置了 `maxColumnWidth`，而列宽超过了它，就逐列增加（最多 20 列）直到不超过；但如果再加一列会让列宽小于 `minColumnWidth`，就**不再增加**。两个限制无法同时满足时，以最小列宽为准。",
-        ]),
-        p("列宽为 `(容器宽度 - gap * (列数 - 1)) / 列数`，并以 `maxColumnWidth` 为上限。上限生效时，网格是**靠左排列**的，右侧留空。"),
-        p("元素高度为 `列宽 * (原始高度 / 原始宽度)`，放进当前最矮的那一列。"),
-        h2("examples", "示例"),
-        h3("固定列数"),
-        code(`<VirtualMasonry columns={4} gap={12} loadData={loadData} renderItem={renderCard} />`),
-        p("按断点选择列数可以用一个小 hook，见[响应式布局](@/guides/responsive/)。"),
-        h3("从已有数据开始"),
-        code(`<VirtualMasonry
-  initialItems={firstPage.items}
-  initialHasMore={firstPage.hasMore}
-  loadData={loadData} // 第一次调用请求的是第 2 页
-  renderItem={renderCard}
-/>`),
-        h3("尺寸在其他字段里"),
-        code(`<VirtualMasonry
-  mapSize={(raw) => ({ width: raw.imgW, height: raw.imgH })}
-  loadData={loadData}
-  renderItem={renderCard}
-/>`),
-        note("相关：[分页与无限滚动](@/guides/pagination/)、[性能调优](@/guides/performance/)。"),
-      ),
-    },
+    "virtual-masonry": virtualMasonryPage(),
 
     "equal-height": equalHeightPage(),
 
-    "dynamic-view": {
-      nav: "DynamicMasonryView",
-      title: "DynamicMasonryView – 在 React 中动态切换瀑布流与等高布局",
-      description:
-        "DynamicMasonryView API 参考：运行时在瀑布流与等高布局之间选择，可由第一次接口返回或受控属性决定，带首页缓存和错误处理。",
-      h1: "DynamicMasonryView",
-      lead: "一个组件，两种布局。布局由属性、第一次接口返回或默认值决定。",
-      body: join(
-        h2("modes", "三种确定布局的方式"),
-        h3("1. 受控"),
-        code(`<DynamicMasonryView
-  isMasonry={useWaterfall} // true = 瀑布流，false = 等高布局
-  loadData={loadData}
-  renderItem={(item, index, isMasonry) => /* ... */ null}
-/>`),
-        p("该属性优先级最高。它变化时，当前布局会被重新挂载，并从第 1 页重新加载。"),
-        h3("2. 由第一次接口返回决定"),
-        code(`<DynamicMasonryView
-  loadData={async (page, pageSize) => {
-    const res = await fetch("/api/content?page=" + page + "&size=" + pageSize);
-    const json = await res.json();
-    return page === 1
-      ? { data: json.items, hasMore: json.hasMore, isMasonry: json.layoutType === "waterfall" }
-      : { data: json.items, hasMore: json.hasMore };
-  }}
-  renderItem={(item, index, isMasonry) => /* ... */ null}
-/>`),
-        p("组件挂载时调用一次 `loadData(1, pageSize)`，从结果里读取 `isMasonry`，并缓存这第一页数据，所以选好的布局会立刻展示它，第 1 页不会被请求第二次。布局类型**只读取一次**，后续页不需要再返回。"),
-        h3("3. 默认值"),
-        p("如果 `loadData` 没有返回 `isMasonry`，则使用 `defaultIsMasonry`（默认 `true`）。如果第一次请求失败，会调用 `onError` 并使用默认布局。"),
-        h2("props", "属性"),
-        table(
-          ["属性", "类型", "默认值", "说明"],
-          [
-            ["`isMasonry`", "`boolean`", "–", "受控模式。`true` 为瀑布流，`false` 为等高布局。"],
-            ["`defaultIsMasonry`", "`boolean`", "`true`", "`loadData` 没有返回 `isMasonry` 时使用。"],
-            ["`loadData`", "`LoadDataFn`", "–", "`(page, pageSize) => Promise<{ data, hasMore, isMasonry? }>`。"],
-            ["`renderItem`", "`(item, index, isMasonry) => ReactNode`", "必填", "渲染函数，最后一个参数表示当前使用的布局。"],
-            ["`waterfallConfig`", "`{ minColumnWidth, maxColumnWidth, columns, gap, buffer }`", "`{}`", "传给 [VirtualMasonry](@/virtual-masonry/)。"],
-            ["`equalHeightConfig`", "`{ targetRowHeight, sizeRange, maxItemWidth, maxStretchRatio, gap, buffer }`", "`{}`", "传给 [FullWidthEqualHeightMasonry](@/equal-height/)。"],
-            ["`pageSize`", "`number`", "`50`", "每页请求的数据量。"],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "把你的数据映射成宽高。"],
-            ["`renderInitialLoader`", "`() => ReactNode`", "空白块", "确定布局类型之前显示的内容。"],
-            ["`onLayoutTypeLoaded`", "`(isMasonry: boolean) => void`", "–", "布局类型确定后调用。"],
-            ["`onError`", "`(error: Error) => void`", "–", "第一次请求失败时调用。"],
-            ["`enableAnimation`", "`boolean`", "`true`", "预留参数，目前没有效果。"],
-          ],
-        ),
-        h2("exports", "导出的类型"),
-        code(`import {
-  DynamicMasonryView,
-  ViewType, // 枚举：ViewType.Waterfall = 1，ViewType.EqualHeight = 2
-} from "react-hybrid-masonry";
-import type { DynamicMasonryViewProps, LoadDataFn } from "react-hybrid-masonry";`),
-        note("`loadData` 的类型是 `LoadDataFn<T>`，只有第一次调用可以带上 `isMasonry`。相关：[分页与无限滚动](@/guides/pagination/)。"),
-      ),
-    },
+    "dynamic-view": dynamicViewPage(),
 
     "guides/pagination": {
       nav: "分页与无限滚动",
@@ -568,7 +447,7 @@ width_i     = round(rightEdge_i - x_i)`, "text"),
         h3("变更"),
         ul([
           "等高布局：新的拼行规则由 `maxStretchRatio` 驱动；宽度按累计比例分配，舍入误差不再落到最后一张图上；最后一行溢出时统一等比缩小。",
-          "瀑布流：推算出的列数不会让列宽小于 `minColumnWidth`。",
+          "瀑布流：设置了 `maxColumnWidth` 时，只在新的列宽仍不小于 `minColumnWidth` 的前提下才会增加列。",
         ]),
         h3("修复"),
         ul([

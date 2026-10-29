@@ -97,3 +97,118 @@ export const SAMPLE_SIZES = [
   [3, 2], [2, 3], [4, 3], [1, 1], [16, 9], [3, 4], [3, 2], [2, 3], [5, 4], [16, 9],
   [1, 1], [3, 2], [4, 3], [2, 3], [3, 2], [1, 1], [4, 3], [16, 9], [3, 4], [3, 2],
 ];
+
+// ---------------------------------------------------------------------------
+// 瀑布流：移植自 src/VirtualMasonry.tsx 的 useMasonryLayout（列数推算 + 放进最矮的一列）
+// ---------------------------------------------------------------------------
+
+export function columnCount({ width, minColumnWidth = 200, maxColumnWidth, gap = 16, columns }) {
+  if (columns) return columns;
+  let cols = Math.max(1, Math.floor(width / minColumnWidth));
+  if (maxColumnWidth) {
+    let calculated = (width - gap * (cols - 1)) / cols;
+    while (calculated > maxColumnWidth && cols < 20) {
+      const nextCols = cols + 1;
+      const nextWidth = (width - gap * (nextCols - 1)) / nextCols;
+      if (nextWidth < minColumnWidth) break;
+      cols = nextCols;
+      calculated = nextWidth;
+    }
+  }
+  return cols;
+}
+
+export function columnWidth({ width, gap = 16, maxColumnWidth }, cols) {
+  const w = (width - gap * (cols - 1)) / cols;
+  return maxColumnWidth && w > maxColumnWidth ? maxColumnWidth : w;
+}
+
+export function masonryLayout(sizes, opts) {
+  const gap = opts.gap ?? 16;
+  const cols = columnCount(opts);
+  const cw = columnWidth(opts, cols);
+  const heights = Array(cols).fill(0);
+  const items = sizes.map(([w, h], index) => {
+    const col = heights.indexOf(Math.min(...heights));
+    const x = (cw + gap) * col;
+    const y = heights[col];
+    const height = cw * (h / w);
+    heights[col] += height + gap;
+    return { index, col, x, y, width: cw, height };
+  });
+  const height = items.reduce((m, it) => Math.max(m, it.y + it.height), 0);
+  return { items, cols, columnWidth: cw, height };
+}
+
+// 每个元素标上它被放进来的顺序，直观展示「总是进入当前最矮的一列」
+export function masonrySvg(sizes, opts, label) {
+  const { items, cols, height } = masonryLayout(sizes, opts);
+  const w = opts.width;
+  const rects = items
+    .map(
+      (it) =>
+        `<rect x="${it.x}" y="${it.y}" width="${it.width}" height="${it.height}" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1"/>` +
+        `<text x="${it.x + it.width / 2}" y="${it.y + it.height / 2}" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent)">${it.index + 1}</text>`,
+    )
+    .join("");
+  const frame = `<rect x="0" y="-4" width="${w}" height="${height + 8}" rx="6" fill="none" stroke="var(--border-strong)" stroke-dasharray="2 3"/>`;
+  const svg = `<svg viewBox="-2 -8 ${w + 4} ${height + 16}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${frame}${rects}</svg>`;
+  return { svg, cols, items };
+}
+
+// ---------------------------------------------------------------------------
+// DynamicMasonryView 如何确定布局：决策流程图。文字由调用方按语言传入。
+// ---------------------------------------------------------------------------
+
+export function decisionSvg(t) {
+  const box = (x, y, w, h, text, dashed = false) => {
+    const lines = text.split("\n");
+    const tspans = lines
+      .map((line, i) => `<tspan x="${x + w / 2}" dy="${i === 0 ? -((lines.length - 1) * 8) : 16}">${line}</tspan>`)
+      .join("");
+    return (
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="var(--bg-elevated)" stroke="${dashed ? "var(--faint)" : "var(--border-strong)"}"${dashed ? ' stroke-dasharray="4 3"' : ""}/>` +
+      `<text x="${x + w / 2}" y="${y + h / 2}" text-anchor="middle" dominant-baseline="central" font-size="13" fill="var(--fg)">${tspans}</text>`
+    );
+  };
+  const diamond = (cx, cy, w, h, text) => {
+    const pts = `${cx},${cy - h / 2} ${cx + w / 2},${cy} ${cx},${cy + h / 2} ${cx - w / 2},${cy}`;
+    const lines = text.split("\n");
+    const tspans = lines
+      .map((line, i) => `<tspan x="${cx}" dy="${i === 0 ? -((lines.length - 1) * 8) : 16}">${line}</tspan>`)
+      .join("");
+    return (
+      `<polygon points="${pts}" fill="var(--accent-soft)" stroke="var(--accent)"/>` +
+      `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="13" fill="var(--accent)">${tspans}</text>`
+    );
+  };
+  const arrow = (d, dashed = false) =>
+    `<path d="${d}" fill="none" stroke="${dashed ? "var(--faint)" : "var(--muted)"}" stroke-width="1.5"${dashed ? ' stroke-dasharray="4 3"' : ""} marker-end="url(#a)"/>`;
+  const tag = (x, y, text) =>
+    `<text x="${x}" y="${y}" font-size="12" fill="var(--muted)" text-anchor="middle">${text}</text>`;
+
+  return (
+    `<svg viewBox="0 0 820 270" role="img" aria-label="${t.aria}" xmlns="http://www.w3.org/2000/svg">` +
+    `<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>` +
+    box(8, 118, 84, 44, t.mount) +
+    arrow("M92 140 H130") +
+    diamond(206, 140, 152, 84, t.askProp) +
+    arrow("M206 98 V62 H300", false) +
+    tag(222, 84, t.yes) +
+    box(300, 40, 168, 44, t.useProp) +
+    arrow("M282 140 H300") +
+    tag(291, 132, t.no) +
+    box(300, 118, 168, 44, t.fetch) +
+    arrow("M468 140 H514") +
+    diamond(590, 140, 152, 84, t.askReturned) +
+    arrow("M590 98 V62 H652", false) +
+    tag(606, 84, t.yes) +
+    box(652, 40, 160, 44, t.useReturned) +
+    arrow("M666 140 H690") +
+    tag(678, 132, t.no) +
+    box(690, 118, 122, 44, t.useDefault) +
+    arrow("M384 162 V226 H751 V162", true) +
+    tag(570, 218, t.failed) +
+    `</svg>`
+  );
+}
