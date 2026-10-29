@@ -1,5 +1,14 @@
-// 使用 Unsplash Source API 生成随机图片
-// 这是一个免费的图片服务,适合用于演示
+// 演示用的图片数据：图片来自 Picsum Photos（免费图片服务）。
+//
+// 怎么让图片尽量不一样：
+// 1. Picsum 目前一共有 993 张图片，picsumPool.ts 里内置了它们的 id 和作者。按 id 取图，
+//    并用一个和池子大小互质的步长打乱顺序，前 993 张互不相同；用 seed 哈希取图的话，
+//    几十张之后就会撞车。
+// 2. 池子用完之后（无限滚动、一次加载 1 万条）只能复用图片。复用时换一个裁剪比例
+//    （Picsum 会按请求的宽高裁剪），同一张图换了比例看起来也会不一样。
+// 3. 比例（竖图、横图、方图）按序号做确定性的伪随机，相邻的卡片形状不会一样。
+
+import { AUTHORS, POOL } from "./picsumPool";
 
 export interface ImageData {
   id: number;
@@ -11,47 +20,27 @@ export interface ImageData {
   [key: string]: any;
 }
 
-// 预定义的图片尺寸比例,让布局更加真实
-const aspectRatios = [
-  { width: 400, height: 600 }, // 竖图 2:3
-  { width: 600, height: 400 }, // 横图 3:2
-  { width: 500, height: 500 }, // 方图 1:1
-  { width: 800, height: 600 }, // 横图 4:3
-  { width: 600, height: 800 }, // 竖图 3:4
-  { width: 700, height: 500 }, // 横图 7:5
-  { width: 500, height: 700 }, // 竖图 5:7
-  { width: 900, height: 600 }, // 横图 3:2
-  { width: 600, height: 900 }, // 竖图 2:3
-  { width: 1000, height: 667 }, // 横图 3:2
+// 预定义的图片比例，让布局更加真实。请求图片时宽度固定为 640，高度按比例算
+const aspectRatios: [number, number][] = [
+  [2, 3], // 竖图
+  [3, 2], // 横图
+  [1, 1], // 方图
+  [4, 3], // 横图
+  [3, 4], // 竖图
+  [7, 5], // 横图
+  [5, 7], // 竖图
+  [16, 9], // 宽图
+  [9, 16], // 长竖图
+  [5, 4], // 横图
 ];
 
-// 图片主题分类
-const categories = [
-  'nature',
-  'architecture',
-  'food',
-  'travel',
-  'animals',
-  'technology',
-  'people',
-  'art',
-  'fashion',
-  'sports',
-];
+const REQUEST_WIDTH = 640;
 
-// 摄影师名字
-const photographers = [
-  'Alex Johnson',
-  'Maria Garcia',
-  'Chen Wei',
-  'Sarah Miller',
-  'David Brown',
-  'Emma Wilson',
-  'James Taylor',
-  'Lisa Anderson',
-  'Michael Lee',
-  'Sophie Martin',
-];
+// 与池子大小（993 = 3 × 331）互质，用来打乱取图顺序
+const STRIDE = 7919;
+
+// 确定性的伪随机：同一个序号永远得到同一个值
+const hash = (n: number) => Math.imul(n + 1, 2654435761) >>> 0;
 
 /**
  * 生成模拟图片数据
@@ -65,22 +54,19 @@ export function generateImageData(page: number, pageSize: number): ImageData[] {
 
   for (let i = 0; i < pageSize; i++) {
     const id = startIndex + i;
-    const ratio = aspectRatios[id % aspectRatios.length];
-    const category = categories[id % categories.length];
-    const photographer = photographers[id % photographers.length];
-
-    // 使用 Picsum Photos 作为图片源 (更稳定的免费图片服务)
-    // 格式: https://picsum.photos/seed/{seed}/{width}/{height}
-    const seed = id + 1000; // 使用 seed 确保图片可重复
-    const url = `https://picsum.photos/seed/${seed}/${ratio.width}/${ratio.height}`;
+    const [photoId, authorIndex] = POOL[(id * STRIDE) % POOL.length];
+    const [rw, rh] = aspectRatios[hash(id) % aspectRatios.length];
+    const width = REQUEST_WIDTH;
+    const height = Math.round((REQUEST_WIDTH * rh) / rw);
 
     data.push({
       id,
-      width: ratio.width,
-      height: ratio.height,
-      url,
-      title: `${category.charAt(0).toUpperCase() + category.slice(1)} Photo ${id}`,
-      author: photographer,
+      width,
+      height,
+      // 用 id 取图，并按请求的宽高裁剪
+      url: `https://picsum.photos/id/${photoId}/${width}/${height}`,
+      title: `Photo #${id + 1}`,
+      author: AUTHORS[authorIndex],
     });
   }
 
