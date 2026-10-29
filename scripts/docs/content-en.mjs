@@ -86,6 +86,7 @@ export default {
     menu: "Menu",
     copy: "Copy",
     copied: "Copied",
+    backToTop: "Back to top",
     footerNote: "Released under the MIT License.",
   },
   groups: [

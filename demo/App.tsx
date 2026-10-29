@@ -4,6 +4,7 @@ import EqualHeightDemo from "./EqualHeightDemo";
 import DynamicDemo from "./DynamicDemo";
 import Header, { NPM, REPO } from "./Header";
 import Hero from "./Hero";
+import BackToTop from "./BackToTop";
 import { I18nContext } from "./I18nContext";
 import { translations } from "./i18n";
 import { useLanguage } from "./theme";
@@ -54,6 +55,8 @@ export default function App() {
           </nav>
         </div>
       </footer>
+
+      <BackToTop />
     </I18nContext.Provider>
   );
 }

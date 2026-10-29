@@ -74,3 +74,9 @@ export const ArrowIcon = () => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
+
+export const ArrowUpIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...base}>
+    <path d="M12 19V5M5 12l7-7 7 7" />
+  </svg>
+);

@@ -9,6 +9,7 @@ export interface Translations {
   header: {
     docs: string;
     theme: string;
+    backToTop: string;
   };
   hero: {
     badge: string;
@@ -54,6 +55,7 @@ export const translations: Record<Language, Translations> = {
     header: {
       docs: "Docs",
       theme: "Toggle color theme",
+      backToTop: "Back to top",
     },
     hero: {
       badge: "Zero dependencies · TypeScript · React 16.8+",
@@ -126,6 +128,7 @@ export const translations: Record<Language, Translations> = {
     header: {
       docs: "文档",
       theme: "切换深浅色",
+      backToTop: "返回顶部",
     },
     hero: {
       badge: "零依赖 · TypeScript · React 16.8+",

@@ -86,6 +86,7 @@ export default {
     menu: "菜单",
     copy: "复制",
     copied: "已复制",
+    backToTop: "返回顶部",
     footerNote: "基于 MIT 协议开源。",
   },
   groups: [

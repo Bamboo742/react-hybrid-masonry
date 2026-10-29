@@ -424,3 +424,64 @@ a.brand,
     display: none;
   }
 }
+
+/* ---------- 返回顶部按钮（演示站与文档站共用） ---------- */
+
+.to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-lg);
+  color: var(--fg-strong);
+  cursor: pointer;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s, color 0.15s,
+    border-color 0.15s;
+}
+
+.to-top:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.to-top:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.to-top[data-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+.to-top svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 640px) {
+  .to-top {
+    right: 16px;
+    bottom: 16px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-top {
+    transition: none;
+  }
+}

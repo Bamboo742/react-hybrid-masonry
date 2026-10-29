@@ -43,6 +43,33 @@
     });
   }
 
+  /* 返回顶部 */
+  var toTop = doc.querySelector(".to-top");
+  if (toTop) {
+    var ticking = false;
+    var update = function () {
+      ticking = false;
+      toTop.setAttribute("data-visible", String(window.scrollY > 400));
+    };
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+    toTop.addEventListener("click", function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // 很长的页面用平滑滚动会拖很久，直接跳回去
+      var instant = reduce || window.scrollY > 20000;
+      window.scrollTo({ top: 0, behavior: instant ? "instant" : "smooth" });
+    });
+  }
+
   /* 代码复制 */
   var copyIcon =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
