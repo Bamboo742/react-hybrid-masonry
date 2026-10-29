@@ -212,3 +212,87 @@ export function decisionSvg(t) {
     `</svg>`
   );
 }
+
+// ---------------------------------------------------------------------------
+// 等高布局：逐步展示「第一行是怎么拼出来的」，数字由和组件相同的规则现算。
+// ---------------------------------------------------------------------------
+
+export function rowSteps(sizes, opts) {
+  const {
+    width,
+    targetRowHeight = 245,
+    gap = 8,
+    sizeRange = [230, 260],
+    maxItemWidth = 975,
+    maxStretchRatio = 1.5,
+  } = opts;
+  const ratios = sizes.map(([w, h]) => w / h);
+  const labels = sizes.map(([w, h]) => `${w}:${h}`);
+  const steps = [];
+  const row = [0];
+  let i = 1;
+  const measure = () => {
+    const rowWidth = sum(row.map((k) => ratios[k] * targetRowHeight));
+    const available = width - (row.length - 1) * gap;
+    return { rowWidth, available, scale: available / rowWidth };
+  };
+  while (i < ratios.length) {
+    const m = measure();
+    const stop = m.scale <= maxStretchRatio;
+    steps.push({ n: row.length, labels: row.map((k) => labels[k]), ...m, stop });
+    if (stop) break;
+    row.push(i);
+    i += 1;
+  }
+  const m = measure();
+  const [minHeight, maxHeight] = sizeRange;
+  const rawHeight = targetRowHeight * m.scale;
+  const rowHeight = Math.min(Math.max(rawHeight, minHeight), maxHeight);
+  const ideal = row.map((k) => ratios[k] * rowHeight);
+  const idealTotal = sum(ideal);
+  const availableForItems = width - (row.length - 1) * gap;
+  let acc = 0;
+  let x = 0;
+  const widths = row.map((k, idx) => {
+    acc += ideal[idx];
+    const rightEdge = (acc / idealTotal) * availableForItems + idx * gap;
+    const w = Math.min(Math.round(rightEdge - x), maxItemWidth);
+    const out = { label: labels[k], ideal: ideal[idx], rightEdge, width: w };
+    x += w + gap;
+    return out;
+  });
+  return { steps, rawHeight, rowHeight, widths, count: row.length, endIndex: i };
+}
+
+// ---------------------------------------------------------------------------
+// 分页指南：视口、buffer 渲染范围与 loadMoreThreshold 触发线的关系图。
+// ---------------------------------------------------------------------------
+
+export function thresholdSvg(t) {
+  const cards = [
+    [60, 22, 90, 50], [160, 22, 90, 80], [60, 82, 90, 70], [160, 112, 90, 56],
+    [60, 162, 90, 64], [160, 178, 90, 74], [60, 236, 90, 50], [160, 262, 90, 30],
+  ]
+    .map(([x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="var(--bg-elevated)" stroke="var(--border-strong)"/>`)
+    .join("");
+  const label = (x, y, text, fill = "var(--muted)", anchor = "start") =>
+    `<text x="${x}" y="${y}" font-size="13" fill="${fill}" text-anchor="${anchor}">${text}</text>`;
+  return (
+    `<svg viewBox="0 0 560 330" role="img" aria-label="${t.aria}" xmlns="http://www.w3.org/2000/svg">` +
+    `<rect x="40" y="10" width="230" height="290" rx="6" fill="var(--bg-subtle)" stroke="var(--border-strong)" stroke-dasharray="2 3"/>` +
+    cards +
+    `<rect x="10" y="44" width="290" height="236" rx="6" fill="none" stroke="var(--faint)" stroke-dasharray="5 4"/>` +
+    `<rect x="26" y="74" width="258" height="176" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>` +
+    `<rect x="26" y="250" width="258" height="50" fill="var(--accent-soft)" opacity="0.5"/>` +
+    `<line x1="26" y1="300" x2="284" y2="300" stroke="var(--accent)" stroke-width="2"/>` +
+    `<path d="M300 250 V300" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#b)" marker-start="url(#b)"/>` +
+    `<defs><marker id="b" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>` +
+    label(320, 156, t.viewport, "var(--accent)") +
+    label(320, 62, t.buffer) +
+    label(320, 280, t.threshold) +
+    label(320, 318, t.trigger, "var(--accent)") +
+    `<path d="M300 62 H310" stroke="var(--faint)"/>` +
+    `<path d="M290 156 H310" stroke="var(--accent)"/>` +
+    `</svg>`
+  );
+}

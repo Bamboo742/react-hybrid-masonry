@@ -1,3 +1,8 @@
+import paginationGuide from "./pages/guide-pagination-zh.mjs";
+import nextjsGuide from "./pages/guide-nextjs-zh.mjs";
+import responsiveGuide from "./pages/guide-responsive-zh.mjs";
+import performanceGuide from "./pages/guide-performance-zh.mjs";
+import algorithmGuide from "./pages/guide-algorithm-zh.mjs";
 import equalHeightPage from "./pages/equal-height-zh.mjs";
 import virtualMasonryPage from "./pages/virtual-masonry-zh.mjs";
 import dynamicViewPage from "./pages/dynamic-view-zh.mjs";
@@ -34,7 +39,7 @@ const faqs = [
   ],
   [
     "加载到一半就不再继续了？",
-    "要么 loadData 返回了 hasMore: false，要么某一页请求被 reject。请求失败时会把 hasMore 置为 false，避免无限重试。重新挂载组件（修改它的 key）即可重新开始；如果希望出错后继续翻页，请在 loadData 里自己捕获错误，并返回 hasMore: true 的空页。",
+    "要么 loadData 返回了 hasMore: false，要么某一页请求被 reject。请求失败时会把 hasMore 置为 false，避免无限重试。重新挂载组件（修改它的 key）即可重新开始；如果希望出错后继续翻页，请在 loadData 里自己重试，重试成功后正常返回，全部失败再抛出错误。不要返回 hasMore: true 的空页：页码会被推进，失败的那一页会被跳过。",
   ],
   [
     "同一页被请求了两次？",
@@ -181,242 +186,15 @@ export function Gallery() {
 
     "dynamic-view": dynamicViewPage(),
 
-    "guides/pagination": {
-      nav: "分页与无限滚动",
-      title: "react-hybrid-masonry 的分页与无限滚动",
-      description:
-        "react-hybrid-masonry 中 loadData、hasMore、loadMoreThreshold 与请求并发控制的工作方式，失败时如何处理，以及筛选条件变化时如何重置列表。",
-      h1: "分页与无限滚动",
-      lead: "页是如何被请求的、下一页何时开始、出错时会怎样，以及如何重新开始。",
-      body: join(
-        h2("contract", "loadData 约定"),
-        code(`type LoadData = (
-  page: number, // 从 1 开始，每成功请求一次加 1
-  pageSize: number,
-) => Promise<{ data: any[]; hasMore: boolean }>;`),
-        p("组件会保存所有已加载的元素。`loadData` 只需返回新的一页，库会把它追加进去。页码由组件内部维护，不需要你自己计数。"),
-        h2("trigger", "下一页何时开始"),
-        p("布局底部有一个 1px 的标记元素，一个 `rootMargin` 为 `loadMoreThreshold` 的 `IntersectionObserver` 监听它，所以当底部距离视口还有 `loadMoreThreshold` px 时就会开始请求下一页。每一页完成后，观察器会重新订阅并立刻检查当前状态：如果标记元素仍然在视口附近（快速滚动超过了内容），就马上开始下一页。"),
-        ul([
-          "用户滚动很快或接口较慢时，调大 `loadMoreThreshold`。",
-          "确保 `pageSize` 能填满超过一屏。页太小的话，每次响应后标记元素仍然可见，请求会一个接一个连续发出。",
-        ]),
-        h2("concurrency", "同一时间只有一个请求"),
-        p("已有请求在进行时，不会再开始新的请求。这个判断是同步的，所以同一帧里连续触发多次也只会发出一个请求，响应也不会乱序。"),
-        h2("errors", "请求失败时"),
-        p("`loadData` 被 reject 时，会用 `console.error` 记录，并**停止自动翻页**（`hasMore` 变为 false），避免标记元素仍可见时，坏掉的接口被无限循环调用。你可以按需选择恢复方式："),
-        ul([
-          "用新的 `key` 重新挂载组件，从第 1 页重新开始。",
-          "在你自己的 `loadData` 里捕获错误，完成自己的重试后，返回 `{ data: [], hasMore: true }`，让翻页继续。",
-        ]),
-        h2("reset", "筛选条件变化时重新开始"),
-        p("组件挂载时加载第 1 页，之后不会自己重新加载。查询条件变化时，请重新挂载它："),
-        code(`<VirtualMasonry
-  key={JSON.stringify(filters)}
-  loadData={(page, size) => fetchImages({ ...filters, page, size })}
-  renderItem={renderCard}
-/>`),
-        h2("dynamic", "配合 DynamicMasonryView"),
-        p("`DynamicMasonryView` 会自己调用第 1 页来获取布局类型，并把这份响应交给内部布局，所以第 1 页只请求一次。受控的 `isMasonry` 属性变化会重新挂载内部布局，并再次请求第 1 页。"),
-        h2("keys", "去重"),
-        p("库不会去除重复数据。如果你的接口可能在两页里返回同一条记录（比如用户滚动期间有新数据插入），请在 `loadData` 里自行去重，并保证 `key` 稳定且唯一。"),
-      ),
-    },
+    "guides/pagination": paginationGuide(),
 
-    "guides/nextjs-ssr": {
-      nav: "Next.js 与 SSR",
-      title: "在 Next.js 与服务端渲染中使用 react-hybrid-masonry",
-      description:
-        "如何在 Next.js App Router 与 SSR 中使用 React 瀑布流组件：use client 指令、水合安全、用 initialItems 传入预取的第一页，以及服务端 HTML 里有什么。",
-      h1: "Next.js 与服务端渲染",
-      lead: "哪些能在服务端运行，哪些要等到浏览器里，以及如何交接预取好的第一页。",
-      body: join(
-        h2("use-client", "加上 use client 指令"),
-        p("这些组件使用了 React hooks，发布时没有带指令。在 Next.js App Router 中，请在客户端文件里引入它们："),
-        code(`"use client";
+    "guides/nextjs-ssr": nextjsGuide(),
 
-import { VirtualMasonry } from "react-hybrid-masonry";
+    "guides/responsive": responsiveGuide(),
 
-export default function Gallery({ first }: { first: { items: any[]; hasMore: boolean } }) {
-  return (
-    <VirtualMasonry
-      initialItems={first.items}
-      initialHasMore={first.hasMore}
-      loadData={(page, size) => fetch("/api/images?page=" + page + "&size=" + size).then((r) => r.json())}
-      renderItem={(item) => <Card item={item} />}
-    />
-  );
-}`),
-        h2("initial", "传入预取的第一页"),
-        p("在服务端组件里取好第 1 页，作为 `initialItems` 传入。组件会直接用这份数据开始，**不会**显示加载状态，也**不会**再请求第 1 页；第一次 `loadData` 调用请求的是第 2 页。"),
-        code(`// app/gallery/page.tsx（服务端组件）
-import Gallery from "./Gallery";
+    "guides/performance": performanceGuide(),
 
-export default async function Page() {
-  const res = await fetch("https://api.example.com/images?page=1&size=30");
-  const first = await res.json();
-  return <Gallery first={{ items: first.items, hasMore: first.hasMore }} />;
-}`),
-        note("`initialItems` 只在 `VirtualMasonry` 上提供。`DynamicMasonryView` 和 `FullWidthEqualHeightMasonry` 的第一页在客户端加载。"),
-        h2("hydration", "水合是安全的"),
-        p("布局副作用在浏览器里使用 `useLayoutEffect`，在服务端自动降级为 `useEffect`。服务端渲染时容器宽度未知，所以两端的首次渲染都是一个空容器，不会出现水合不一致。元素位置会在挂载后、测量到宽度时立刻计算。"),
-        h2("html", "服务端 HTML 里有什么"),
-        p("因为位置取决于测量到的宽度，即使传了 `initialItems`，**服务端 HTML 里也不包含卡片**。如果搜索引擎必须看到这些内容，请在布局旁边额外渲染一份可被抓取的列表（比如页面里的链接，或一个 `<noscript>` 块），或者把这个图库用在不需要被收录的内容上。"),
-        h2("lazy", "懒加载"),
-        p("布局只在浏览器里有意义，所以可以把它从首屏 bundle 里拆出去："),
-        code(`import dynamic from "next/dynamic";
-
-const Gallery = dynamic(() => import("./Gallery"), { ssr: false });`),
-        p("只有在你不需要靠 `initialItems` 来避免加载闪烁时才这样用。"),
-      ),
-    },
-
-    "guides/responsive": {
-      nav: "响应式布局",
-      title: "React 响应式瀑布流：按断点设置列数",
-      description:
-        "react-hybrid-masonry 如何响应容器宽度变化，如何按断点选择列数，以及等高布局如何适配不同屏幕。",
-      h1: "响应式布局",
-      lead: "布局会跟随容器宽度。这里介绍如何控制它在各个尺寸下的表现。",
-      body: join(
-        h2("measure", "宽度如何测量"),
-        p("布局容器（父元素宽度的 `100%`）的宽度会在挂载时读取一次，之后在 `ResizeObserver` 通知、窗口 `resize` 和 `visibilitychange` 时再读取。多出来的监听用于保证窗口在标签页处于后台时被缩放后，布局依然正确。只有宽度真的变化时才会更新状态。"),
-        p("所以父元素必须有真实宽度。被隐藏的父元素（`display: none`）在显示出来之前什么也不会渲染。"),
-        h2("waterfall", "瀑布流：按宽度限制"),
-        p("设置 `minColumnWidth` 和 `maxColumnWidth` 后，列数随宽度变化，规则见[列数如何确定](@/virtual-masonry/#columns)。只需要大小合适的列时，这样就够用了。"),
-        h2("breakpoints", "瀑布流：按断点指定列数"),
-        p("当设计稿要求在特定宽度下是精确的列数时，请自己计算并传入 `columns`："),
-        code(`import { useEffect, useState } from "react";
-
-function useColumns() {
-  const [columns, setColumns] = useState(2);
-  useEffect(() => {
-    const update = () => {
-      const w = window.innerWidth;
-      setColumns(w >= 1600 ? 6 : w >= 1280 ? 5 : w >= 992 ? 4 : w >= 640 ? 3 : 2);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-  return columns;
-}
-
-function Gallery() {
-  const columns = useColumns();
-  return <VirtualMasonry columns={columns} gap={16} loadData={loadData} renderItem={renderCard} />;
-}`),
-        p("`DynamicMasonryView` 里同样可以用 `waterfallConfig={{ columns }}`。"),
-        h2("equal-height", "等高布局"),
-        p("等高布局没有列数的概念：每次宽度变化，各行都会按同一规则重新拼出，所以每行的图片数量会自动变化。想按断点调整观感，可以传入不同的 `targetRowHeight` 和 `sizeRange`，比如手机上用更小的行高："),
-        code(`const small = window.innerWidth < 640;
-
-<FullWidthEqualHeightMasonry
-  targetRowHeight={small ? 140 : 245}
-  sizeRange={small ? [120, 170] : [230, 260]}
-  gap={small ? 4 : 8}
-  loadData={loadData}
-  renderItem={renderCard}
-/>`),
-        h2("cost", "缩放的代价"),
-        p("每次宽度变化都会重新计算所有已加载元素的布局。几千个元素时开销很小，但不要在每一帧动画里都去修改 `gap`、`columns` 或尺寸参数。"),
-      ),
-    },
-
-    "guides/performance": {
-      nav: "性能调优",
-      title: "React 虚拟瀑布流性能调优：buffer、阈值与图片",
-      description:
-        "让很长的 React 瀑布流图库保持流畅的实用建议：buffer 与 loadMoreThreshold、稳定的元素引用、图片尺寸、懒加载图片和 memo 化的卡片。",
-      h1: "性能调优",
-      lead: "库已经替你做了什么，以及你自己的卡片需要检查什么。",
-      body: join(
-        h2("built-in", "已经做了的优化"),
-        ul([
-          "只有视口内加上 `buffer` 范围内的元素会被挂载，其余部分在 DOM 里没有任何开销。",
-          "滚动位置每个动画帧最多更新一次（`requestAnimationFrame`）。",
-          "滚动过程中 item 对象保持引用不变，只有元素或容器宽度变化时才会变，所以做了 memo 的子组件不会在每次滚动时重新渲染。",
-          "布局用 `useMemo` 缓存，滚动不会重新计算位置。",
-        ]),
-        h2("buffer", "buffer"),
-        p("`buffer`（默认 `1500`）是视口上下一直保持挂载的距离。值越大，快速滚动时空白越少，但挂载的卡片和同时请求的图片也越多；值越小越省，但快速滚动时能看到加载的过程。"),
-        note("调 `buffer` 和 `loadMoreThreshold` 时，请同时观察图片请求数量和你的性能评分，不要只凭画面看起来更好就一直调大。"),
-        h2("threshold", "loadMoreThreshold"),
-        p("`loadMoreThreshold` 越大，下一次请求开始得越早，能掩盖延迟，但会加载用户可能永远滚不到的数据。请根据接口延迟和页大小来选择。"),
-        h2("images", "图片"),
-        ul([
-          "在数据里给每个元素真实的 `width` 和 `height`。布局在图片加载前就按它们算好，所以图片到达时不会有任何跳动。",
-          "给图片加上 `loading=\"lazy\"` 和 `decoding=\"async\"`，并使用与显示尺寸接近的缩略图。",
-          "使用 `object-fit: cover`，这样取整后尺寸略有差异时也不会让图片变形。",
-        ]),
-        code(`<img src={item.thumb} alt={item.title} width={item.width} height={item.height}
-     loading="lazy" decoding="async"
-     style={{ width: "100%", height: "100%", objectFit: "cover" }} />`),
-        h2("cards", "卡片"),
-        ul([
-          "用 `React.memo` 包住卡片。因为 item 的引用是稳定的，只有它自己的数据变化时才会重新渲染。",
-          "保持 `renderItem` 轻量。不要在每张卡片里创建 observer 或很重的状态，能共用就共用。",
-          "始终在返回的元素上设置 `key={item.id}`。",
-        ]),
-        code(`const Card = React.memo(function Card({ item }: { item: any }) {
-  return (
-    <div style={{ position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height }}>
-      <img src={item.thumb} alt={item.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-    </div>
-  );
-});
-
-<VirtualMasonry renderItem={(item) => <Card key={item.id} item={item} />} /* ... */ />`),
-        h2("page-size", "pageSize"),
-        p("选一个能填满超过一屏（包括预加载阈值）的页大小。页太小会造成请求连发，页太大会拖慢首屏。可以从 30 到 50 开始尝试。"),
-      ),
-    },
-
-    "guides/equal-height-algorithm": {
-      nav: "等高布局算法详解",
-      title: "等高（Justified）布局算法是如何工作的",
-      description:
-        "逐步讲解 FullWidthEqualHeightMasonry 的行填充算法：贪心拼行、缩放比例计算、行高范围限制、不累积舍入误差的宽度分配，以及最后一行的规则。",
-      h1: "等高布局算法详解",
-      lead: "行填充算法的逐步说明，调 `maxStretchRatio` 和 `sizeRange` 时很有用。",
-      body: join(
-        h2("input", "输入"),
-        p("每个元素有宽高比 `r = 宽 / 高`。以目标行高 `H` 计算，元素的理想宽度是 `r * H`。`W` 是容器宽度，`g` 是间距。"),
-        h2("rows", "1. 贪心拼出一行"),
-        p("用下一张图片开始一行。每次加入新图片之前，先计算让当前行铺满容器所需要的缩放比例："),
-        code(`scale = (W - (n - 1) * g) / sum(r_i * H)   // 这一行有 n 张图`, "text"),
-        ul([
-          "如果 `scale <= maxStretchRatio`，说明这一行已经够满，结束这一行。",
-          "否则加入下一张图片再判断。加入图片总会让缩放比例更接近 1。",
-          "如果这一行已经需要**缩小**（`scale < 1`），同样结束，缩小不设上限。",
-        ]),
-        p("因为一张图几乎总是需要很大的放大才能填满一行，这条规则不需要特殊处理，就能保证每行至少有两张图。"),
-        h2("height", "2. 计算并限制行高"),
-        code(`rowHeight = H * scale
-rowHeight = clamp(rowHeight, minHeight, maxHeight)   // sizeRange`, "text"),
-        p("`sizeRange` 是一条独立的视觉密度限制，所以总是生效。限制导致无法精确铺满时，下一步仍会让整行结束在边缘。"),
-        h2("widths", "3. 不累积误差地分配宽度"),
-        p("每张图的理想宽度是 `r_i * rowHeight`。为了让这一行刚好结束在容器边缘，第 `i` 张图的右边缘根据理想宽度的累计占比计算，再取整："),
-        code(`available = W - (n - 1) * g
-rightEdge_i = (sum(ideal_0..i) / sum(ideal_all)) * available + i * g
-width_i     = round(rightEdge_i - x_i)`, "text"),
-        p("这样舍入误差不会累积，也不会全部压给最后一张图（那样它的比例会明显偏离真实图片）。最后每个宽度都会限制在 `maxItemWidth` 以内。"),
-        h2("last", "4. 最后一行"),
-        ul([
-          "已加载数据末尾的那一行**不会被拉伸**，它的高度被限制在 `sizeRange[0]` 与 `targetRowHeight` 之间。",
-          "如果它的自然宽度会超出容器，这一行所有图片按同一个系数等比缩小。",
-          "下一页到来后，原来的最后一行变成普通行，并重新计算。",
-        ]),
-        h2("virtual", "5. 虚拟化"),
-        p("每个元素得到 `x`、`y`、`width`、`height` 和 `originalIndex`。只有与「视口加上 `buffer`」相交的元素才会渲染，并以 `originalIndex` 作为 React 的 key。容器的 `minHeight` 是最后一行的底部。"),
-        h2("tips", "调参提示"),
-        ul([
-          "出现很多只有 2 张图的行，说明相对容器宽度来说 `targetRowHeight` 太大：调小它，或者放宽 `sizeRange`。",
-          "`sizeRange` 很窄时行会很精确，但可选的组合变少；如果行看起来参差不齐，就放宽它。",
-          "降低 `maxStretchRatio` 会减少放大，提高它则会让行更早结束。",
-        ]),
-      ),
-    },
+    "guides/equal-height-algorithm": algorithmGuide(),
 
     faq: {
       nav: "常见问题",
