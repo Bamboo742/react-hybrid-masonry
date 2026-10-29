@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import FullWidthEqualHeightMasonry from "../src/FullWidthEqualHeightMasonry";
-import { loadImageData } from "./imageData";
 import DemoPanel from "./DemoPanel";
 import PhotoCard from "./PhotoCard";
 import { useGalleryStats } from "./useGalleryStats";
@@ -44,15 +43,6 @@ export default function EqualHeightDemo() {
   const { t } = useI18n();
   const stats = useGalleryStats();
 
-  const loadData = useCallback(
-    async (page: number, pageSize: number) => {
-      const result = await loadImageData(page, pageSize);
-      stats.track(page, result.data.length);
-      return result;
-    },
-    [stats.track],
-  );
-
   return (
     <DemoPanel
       title={t.equalHeight.title}
@@ -62,8 +52,9 @@ export default function EqualHeightDemo() {
       galleryRef={stats.containerRef}
     >
       <FullWidthEqualHeightMasonry
-        loadData={loadData}
-        pageSize={30}
+        key={stats.mode}
+        loadData={stats.load}
+        pageSize={stats.pageSize}
         targetRowHeight={245}
         sizeRange={[230, 260]}
         maxItemWidth={975}

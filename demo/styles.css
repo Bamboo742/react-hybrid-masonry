@@ -516,3 +516,10 @@ a {
 .tabs::-webkit-scrollbar {
   display: none;
 }
+
+.panel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}

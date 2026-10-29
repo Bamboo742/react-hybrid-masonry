@@ -32,6 +32,10 @@ export interface Translations {
     items: string;
     copy: string;
     copied: string;
+    dataset: string;
+    infinite: string;
+    tenk: string;
+    rendered: string;
   };
   waterfall: PanelText;
   equalHeight: PanelText;
@@ -91,6 +95,10 @@ export const translations: Record<Language, Translations> = {
       items: "items",
       copy: "Copy",
       copied: "Copied",
+      dataset: "Data",
+      infinite: "Infinite scroll",
+      tenk: "Load 10,000 at once",
+      rendered: "Rendered",
     },
     waterfall: {
       title: "Waterfall layout",
@@ -159,6 +167,10 @@ export const translations: Record<Language, Translations> = {
       items: "项",
       copy: "复制",
       copied: "已复制",
+      dataset: "数据",
+      infinite: "无限滚动",
+      tenk: "一次加载 1 万条",
+      rendered: "渲染占比",
     },
     waterfall: {
       title: "瀑布流布局",

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import DynamicMasonryView from "../src/DynamicMasonryView";
-import { loadImageData } from "./imageData";
 import DemoPanel from "./DemoPanel";
 import PhotoCard from "./PhotoCard";
 import { useGalleryStats } from "./useGalleryStats";
@@ -47,14 +46,14 @@ export default function DynamicDemo() {
   const [isMasonry, setIsMasonry] = useState(true);
   const stats = useGalleryStats();
 
+  const { load } = stats;
   const loadData = useCallback(
     async (page: number, pageSize: number) => {
-      const result = await loadImageData(page, pageSize);
-      stats.track(page, result.data.length);
+      const result = await load(page, pageSize);
       // 第一次请求里带上布局类型，这是接口驱动布局的写法
       return page === 1 ? { ...result, isMasonry } : result;
     },
-    [stats.track, isMasonry],
+    [load, isMasonry],
   );
 
   const choose = (next: boolean) => {
@@ -84,10 +83,10 @@ export default function DynamicDemo() {
       controls={controls}
     >
       <DynamicMasonryView
-        key={isMasonry ? "masonry" : "equal"}
+        key={`${isMasonry ? "masonry" : "equal"}-${stats.mode}`}
         isMasonry={isMasonry}
         loadData={loadData}
-        pageSize={30}
+        pageSize={stats.pageSize}
         waterfallConfig={{ minColumnWidth: 200, maxColumnWidth: 350, gap: 16 }}
         equalHeightConfig={{
           targetRowHeight: 245,

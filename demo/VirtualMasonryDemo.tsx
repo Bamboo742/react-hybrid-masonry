@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import VirtualMasonry from "../src/VirtualMasonry";
-import { loadImageData } from "./imageData";
 import DemoPanel from "./DemoPanel";
 import PhotoCard from "./PhotoCard";
 import { useGalleryStats } from "./useGalleryStats";
@@ -44,15 +43,6 @@ export default function VirtualMasonryDemo() {
   const { t } = useI18n();
   const stats = useGalleryStats();
 
-  const loadData = useCallback(
-    async (page: number, pageSize: number) => {
-      const result = await loadImageData(page, pageSize);
-      stats.track(page, result.data.length);
-      return result;
-    },
-    [stats.track],
-  );
-
   return (
     <DemoPanel
       title={t.waterfall.title}
@@ -62,8 +52,9 @@ export default function VirtualMasonryDemo() {
       galleryRef={stats.containerRef}
     >
       <VirtualMasonry
-        loadData={loadData}
-        pageSize={30}
+        key={stats.mode}
+        loadData={stats.load}
+        pageSize={stats.pageSize}
         minColumnWidth={200}
         maxColumnWidth={350}
         gap={16}

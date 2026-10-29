@@ -91,19 +91,19 @@ export function generateImageData(page: number, pageSize: number): ImageData[] {
  * 模拟异步加载图片数据
  * @param page 页码
  * @param pageSize 每页数量
- * @param maxPages 最大页数
+ * @param total 数据总量；不传表示无限，永远还有下一页
  * @returns Promise 包含数据和是否有更多数据
  */
 export async function loadImageData(
   page: number,
   pageSize: number,
-  maxPages: number = 10
+  total?: number
 ): Promise<{ data: ImageData[]; hasMore: boolean }> {
   // 模拟网络延迟
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   const data = generateImageData(page, pageSize);
-  const hasMore = page < maxPages;
+  const hasMore = total === undefined ? true : page * pageSize < total;
 
   return { data, hasMore };
 }
