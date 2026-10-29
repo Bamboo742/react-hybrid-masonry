@@ -196,7 +196,7 @@ ${pager}
         <nav aria-label="${esc(ui.siteNav)}"><a href="${REPO}">GitHub</a><a href="${NPM}">npm</a><a href="${REPO}/issues">Issues</a></nav>
       </div>
     </footer>
-    <button class="to-top" type="button" data-visible="false" aria-label="${esc(ui.backToTop)}" title="${esc(ui.backToTop)}">${icon.arrowUp}</button>
+    <button class="to-top" type="button" aria-label="${esc(ui.backToTop)}" title="${esc(ui.backToTop)}">${icon.arrowUp}</button>
   </body>
 </html>
 `;

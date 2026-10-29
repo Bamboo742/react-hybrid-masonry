@@ -43,25 +43,9 @@
     });
   }
 
-  /* 返回顶部 */
+  /* 返回顶部：按钮一直显示 */
   var toTop = doc.querySelector(".to-top");
   if (toTop) {
-    var ticking = false;
-    var update = function () {
-      ticking = false;
-      toTop.setAttribute("data-visible", String(window.scrollY > 400));
-    };
-    window.addEventListener(
-      "scroll",
-      function () {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(update);
-        }
-      },
-      { passive: true },
-    );
-    update();
     toTop.addEventListener("click", function () {
       var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       // 很长的页面用平滑滚动会拖很久，直接跳回去

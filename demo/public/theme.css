@@ -443,10 +443,7 @@ a.brand,
   box-shadow: var(--shadow-lg);
   color: var(--fg-strong);
   cursor: pointer;
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s, color 0.15s,
-    border-color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .to-top:hover {
@@ -458,12 +455,6 @@ a.brand,
 .to-top:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-}
-
-.to-top[data-visible="false"] {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(8px);
 }
 
 .to-top svg {
