@@ -32,6 +32,7 @@ const tocOf = (html) =>
 
 const plainText = (html) =>
   html
+    .replace(/<svg[\s\S]*?<\/svg>/g, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")

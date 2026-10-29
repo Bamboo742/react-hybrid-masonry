@@ -1,3 +1,4 @@
+import equalHeightPage from "./pages/equal-height-en.mjs";
 import { code, h2, h3, join, note, ol, p, table, ul } from "./helpers.mjs";
 
 const card = String.raw`<div
@@ -241,67 +242,7 @@ export function Gallery() {
       ),
     },
 
-    "equal-height": {
-      nav: "FullWidthEqualHeightMasonry",
-      title: "FullWidthEqualHeightMasonry – React Equal-Height Justified Gallery Layout",
-      description:
-        "FullWidthEqualHeightMasonry API reference: a Google Photos style justified layout for React where every row has the same height and fills the container width, with virtual scrolling and infinite loading.",
-      h1: "FullWidthEqualHeightMasonry",
-      lead: "Google Photos style layout: images keep their aspect ratio, every row has one height and is stretched or shrunk to fill the container width exactly.",
-      body: join(
-        h2("usage", "Usage"),
-        code(`import { FullWidthEqualHeightMasonry } from "react-hybrid-masonry";
-
-<FullWidthEqualHeightMasonry
-  loadData={loadData}
-  pageSize={30}
-  targetRowHeight={245}
-  sizeRange={[230, 260]}
-  maxItemWidth={975}
-  gap={8}
-  renderItem={(item) => (
-    ${card.replace(/\n/g, "\n    ")}
-  )}
-/>`),
-        h2("props", "Props"),
-        table(
-          ["Prop", "Type", "Default", "Description"],
-          [
-            ["`loadData`", "`(page, pageSize) => Promise<{ data: any[]; hasMore: boolean }>`", "–", "Loads one page. Page numbers start at 1."],
-            ["`renderItem`", "`(item, index) => ReactNode`", "required", "Renders one positioned item. `index` is the position in all loaded data."],
-            ["`pageSize`", "`number`", "`50`", "Items requested per page."],
-            ["`targetRowHeight`", "`number`", "`245`", "Preferred row height. The real height is adjusted within `sizeRange`."],
-            ["`sizeRange`", "`[number, number]`", "`[230, 260]`", "Allowed row height range, `[min, max]`."],
-            ["`maxItemWidth`", "`number`", "`975`", "Maximum width of a single item."],
-            ["`maxStretchRatio`", "`number`", "`1.5`", "A row keeps taking images until filling it needs at most this enlargement. Shrinking is not limited."],
-            ["`gap`", "`number`", "`8`", "Gap between items, horizontally and vertically, in px."],
-            ["`buffer`", "`number`", "`1500`", "Extra distance in px that is still rendered around the viewport."],
-            ["`loadMoreThreshold`", "`number`", "`500`", "Distance in px from the bottom at which the next page is requested."],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "Maps your data to dimensions."],
-            ["`enableAnimation`", "`boolean`", "`true`", "Reserved. It has no effect yet."],
-          ],
-        ),
-        h2("behaviour", "How it behaves"),
-        ul([
-          "Rows are built greedily: images are added to a row while filling the row would need an enlargement above `maxStretchRatio`. Rows may shrink images as much as needed.",
-          "The row height is then clamped to `sizeRange`, and widths are distributed so that the row ends exactly at the container edge, without leaving rounding errors on the last image.",
-          "The **last row is not stretched**. It keeps natural proportions (at most `targetRowHeight` high), so a few images are never blown up. When the next page arrives, that row is recomputed.",
-          "No item is wider than `maxItemWidth`, so a very wide panorama does not take the whole row.",
-        ]),
-        p("The full procedure is described in [how the equal-height algorithm works](@/guides/equal-height-algorithm/)."),
-        h2("tuning", "Tuning"),
-        table(
-          ["Goal", "Change"],
-          [
-            ["Larger photos, fewer per row", "Raise `targetRowHeight` and `sizeRange`, for example `320` and `[300, 360]`."],
-            ["Tighter justification", "Narrow `sizeRange`; rows then fill the width by choosing different image counts rather than by scaling."],
-            ["Avoid heavily enlarged rows", "Lower `maxStretchRatio` towards `1.2`; more images are put into a row before it is closed."],
-            ["Prevent giant panoramas", "Lower `maxItemWidth`."],
-          ],
-        ),
-        note("Related: [responsive layouts](@/guides/responsive/), [pagination and infinite scroll](@/guides/pagination/)."),
-      ),
-    },
+    "equal-height": equalHeightPage(),
 
     "dynamic-view": {
       nav: "DynamicMasonryView",

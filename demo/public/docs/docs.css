@@ -586,3 +586,54 @@ tbody tr:hover td {
     transition: none;
   }
 }
+
+/* ---------- 示意图 ---------- */
+
+.figure {
+  margin: 20px 0 28px;
+  padding: 18px 18px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-subtle);
+}
+
+.figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.figure figcaption {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.figure-grid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0 28px;
+}
+
+.figure-grid .figure {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .figure-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.toc a,
+.sidebar a {
+  overflow-wrap: anywhere;
+}
+
+.toc {
+  overflow-x: hidden;
+}

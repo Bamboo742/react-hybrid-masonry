@@ -1,3 +1,4 @@
+import equalHeightPage from "./pages/equal-height-zh.mjs";
 import { code, h2, h3, join, note, ol, p, table, ul } from "./helpers.mjs";
 
 const card = String.raw`<div
@@ -241,67 +242,7 @@ export function Gallery() {
       ),
     },
 
-    "equal-height": {
-      nav: "FullWidthEqualHeightMasonry",
-      title: "FullWidthEqualHeightMasonry – React 等高（Justified）图片布局",
-      description:
-        "FullWidthEqualHeightMasonry API 参考：Google Photos 风格的 React 等高布局，每行高度一致并铺满容器宽度，支持虚拟滚动和无限加载。",
-      h1: "FullWidthEqualHeightMasonry",
-      lead: "Google Photos 风格布局：图片保持宽高比，每一行高度相同，并按容器宽度精确拉伸或收缩来铺满。",
-      body: join(
-        h2("usage", "用法"),
-        code(`import { FullWidthEqualHeightMasonry } from "react-hybrid-masonry";
-
-<FullWidthEqualHeightMasonry
-  loadData={loadData}
-  pageSize={30}
-  targetRowHeight={245}
-  sizeRange={[230, 260]}
-  maxItemWidth={975}
-  gap={8}
-  renderItem={(item) => (
-    ${card.replace(/\n/g, "\n    ")}
-  )}
-/>`),
-        h2("props", "属性"),
-        table(
-          ["属性", "类型", "默认值", "说明"],
-          [
-            ["`loadData`", "`(page, pageSize) => Promise<{ data: any[]; hasMore: boolean }>`", "–", "加载一页数据，页码从 1 开始。"],
-            ["`renderItem`", "`(item, index) => ReactNode`", "必填", "渲染单个已定位的元素。`index` 是它在全部已加载数据中的序号。"],
-            ["`pageSize`", "`number`", "`50`", "每页请求的数据量。"],
-            ["`targetRowHeight`", "`number`", "`245`", "目标行高，实际行高会在 `sizeRange` 内调整。"],
-            ["`sizeRange`", "`[number, number]`", "`[230, 260]`", "允许的行高范围 `[最小, 最大]`。"],
-            ["`maxItemWidth`", "`number`", "`975`", "单个元素的最大宽度。"],
-            ["`maxStretchRatio`", "`number`", "`1.5`", "一行会不断加入新图片，直到填满整行所需的放大倍数不超过该值；缩小不设上限。"],
-            ["`gap`", "`number`", "`8`", "元素之间的水平和垂直间距（px）。"],
-            ["`buffer`", "`number`", "`1500`", "视口周围仍会渲染的缓冲距离（px）。"],
-            ["`loadMoreThreshold`", "`number`", "`500`", "距离底部多远（px）时开始请求下一页。"],
-            ["`mapSize`", "`(raw) => { width, height }`", "–", "把你的数据映射成宽高。"],
-            ["`enableAnimation`", "`boolean`", "`true`", "预留参数，目前没有效果。"],
-          ],
-        ),
-        h2("behaviour", "行为说明"),
-        ul([
-          "行是贪心地拼出来的：只要填满当前这一行所需的放大倍数超过 `maxStretchRatio`，就继续加入图片；需要缩小时则不限制缩小的幅度。",
-          "行高随后被限制在 `sizeRange` 内，宽度再按比例分配，使整行刚好结束在容器边缘，不会把舍入误差留给最后一张图。",
-          "**最后一行不会被拉伸**，保持自然比例（高度最多为 `targetRowHeight`），图片很少时不会被放大。下一页到来后，这一行会重新计算。",
-          "任何元素都不会比 `maxItemWidth` 更宽，所以很宽的全景图不会占满整行。",
-        ]),
-        p("完整流程见[等高布局算法详解](@/guides/equal-height-algorithm/)。"),
-        h2("tuning", "调参建议"),
-        table(
-          ["目标", "做法"],
-          [
-            ["图片更大，每行更少", "提高 `targetRowHeight` 和 `sizeRange`，例如 `320` 和 `[300, 360]`。"],
-            ["对齐更严格", "缩小 `sizeRange`；此时每行靠选择不同的图片数量来铺满，而不是靠缩放。"],
-            ["避免行被明显放大", "把 `maxStretchRatio` 降到 `1.2` 左右；一行会放进更多图片后才结束。"],
-            ["避免超大的全景图", "降低 `maxItemWidth`。"],
-          ],
-        ),
-        note("相关：[响应式布局](@/guides/responsive/)、[分页与无限滚动](@/guides/pagination/)。"),
-      ),
-    },
+    "equal-height": equalHeightPage(),
 
     "dynamic-view": {
       nav: "DynamicMasonryView",

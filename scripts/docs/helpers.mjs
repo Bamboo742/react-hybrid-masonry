@@ -49,4 +49,11 @@ export const table = (head, rows) =>
     .map((r) => `<tr>${r.map((c) => `<td>${md(c)}</td>`).join("")}</tr>`)
     .join("")}</tbody></table></div>`;
 
+export const figure = (svg, caption) =>
+  `<figure class="figure">${svg}<figcaption>${md(caption)}</figcaption></figure>`;
+
+// 并排对比的多张图
+export const figures = (...items) =>
+  `<div class="figure-grid">${items.map(([svg, caption]) => figure(svg, caption)).join("")}</div>`;
+
 export const join = (...parts) => parts.join("\n");
